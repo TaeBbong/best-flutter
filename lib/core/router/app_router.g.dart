@@ -9,25 +9,25 @@ part of 'app_router.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(routerNotifier)
-final routerProvider = RouterNotifierProvider._();
+@ProviderFor(authRouterNotifier)
+final authRouterProvider = AuthRouterNotifierProvider._();
 
-final class RouterNotifierProvider
+final class AuthRouterNotifierProvider
     extends $FunctionalProvider<RouterNotifier, RouterNotifier, RouterNotifier>
     with $Provider<RouterNotifier> {
-  RouterNotifierProvider._()
+  AuthRouterNotifierProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'routerProvider',
+        name: r'authRouterProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$routerNotifierHash();
+  String debugGetCreateSourceHash() => _$authRouterNotifierHash();
 
   @$internal
   @override
@@ -36,7 +36,7 @@ final class RouterNotifierProvider
 
   @override
   RouterNotifier create(Ref ref) {
-    return routerNotifier(ref);
+    return authRouterNotifier(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -48,27 +48,28 @@ final class RouterNotifierProvider
   }
 }
 
-String _$routerNotifierHash() => r'53a65c14fc65697fcb850356ef28ea9c7fea0814';
+String _$authRouterNotifierHash() =>
+    r'c8bfb4accb2d45c0739df4fb6e3d16f9f0cb5ef3';
 
-@ProviderFor(router)
-final routerProvider = RouterProvider._();
+@ProviderFor(goRouter)
+final goRouterProvider = GoRouterProvider._();
 
-final class RouterProvider
+final class GoRouterProvider
     extends $FunctionalProvider<GoRouter, GoRouter, GoRouter>
     with $Provider<GoRouter> {
-  RouterProvider._()
+  GoRouterProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'routerProvider',
+        name: r'goRouterProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$routerHash();
+  String debugGetCreateSourceHash() => _$goRouterHash();
 
   @$internal
   @override
@@ -77,7 +78,7 @@ final class RouterProvider
 
   @override
   GoRouter create(Ref ref) {
-    return router(ref);
+    return goRouter(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -89,4 +90,4 @@ final class RouterProvider
   }
 }
 
-String _$routerHash() => r'2c6e61b2a9386bf88b6408a61bd66be136da46f4';
+String _$goRouterHash() => r'aff965106d39c78493c8f1a9443a1a015ab0a5e4';

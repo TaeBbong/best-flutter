@@ -11,33 +11,33 @@ part 'feed_providers.g.dart';
 
 // Data Source Provider
 @riverpod
-FeedRemoteDataSource feedRemoteDataSource(FeedRemoteDataSourceRef ref) {
+FeedRemoteDataSource feedRemoteDataSource(Ref ref) {
   final apiClient = ref.watch(apiClientProvider);
   return FeedRemoteDataSourceImpl(apiClient);
 }
 
 // Repository Provider
 @riverpod
-FeedRepository feedRepository(FeedRepositoryRef ref) {
+FeedRepository feedRepository(Ref ref) {
   final remoteDataSource = ref.watch(feedRemoteDataSourceProvider);
   return FeedRepositoryImpl(remoteDataSource);
 }
 
 // UseCase Providers
 @riverpod
-GetPostsUseCase getPostsUseCase(GetPostsUseCaseRef ref) {
+GetPostsUseCase getPostsUseCase(Ref ref) {
   final repository = ref.watch(feedRepositoryProvider);
   return GetPostsUseCase(repository);
 }
 
 @riverpod
-CreatePostUseCase createPostUseCase(CreatePostUseCaseRef ref) {
+CreatePostUseCase createPostUseCase(Ref ref) {
   final repository = ref.watch(feedRepositoryProvider);
   return CreatePostUseCase(repository);
 }
 
 @riverpod
-LikePostUseCase likePostUseCase(LikePostUseCaseRef ref) {
+LikePostUseCase likePostUseCase(Ref ref) {
   final repository = ref.watch(feedRepositoryProvider);
   return LikePostUseCase(repository);
 }

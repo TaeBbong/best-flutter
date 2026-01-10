@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../../core/error/result.dart';
 import '../../domain/entities/post.dart';
 import 'feed_providers.dart';
 
@@ -71,7 +72,7 @@ class FeedNotifier extends _$FeedNotifier {
   }
 
   Future<void> loadMore() async {
-    final currentState = state.valueOrNull;
+    final currentState = state.value;
     if (currentState == null || !currentState.hasMore || currentState.isLoadingMore) {
       return;
     }
@@ -102,7 +103,7 @@ class FeedNotifier extends _$FeedNotifier {
 
     return result.fold(
       onSuccess: (post) {
-        final currentState = state.valueOrNull;
+        final currentState = state.value;
         if (currentState != null) {
           state = AsyncValue.data(
             currentState.copyWith(posts: [post, ...currentState.posts]),
@@ -115,7 +116,7 @@ class FeedNotifier extends _$FeedNotifier {
   }
 
   Future<void> toggleLike(String postId) async {
-    final currentState = state.valueOrNull;
+    final currentState = state.value;
     if (currentState == null) return;
 
     final postIndex = currentState.posts.indexWhere((p) => p.id == postId);

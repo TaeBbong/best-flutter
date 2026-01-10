@@ -55,7 +55,7 @@ final class FeedRemoteDataSourceProvider
 }
 
 String _$feedRemoteDataSourceHash() =>
-    r'b96605f23db7ea283f6f37316338447df9a5bee9';
+    r'f1703e16ad715531a3f5b16f4e205632393e1c34';
 
 @ProviderFor(feedRepository)
 final feedRepositoryProvider = FeedRepositoryProvider._();
@@ -96,7 +96,7 @@ final class FeedRepositoryProvider
   }
 }
 
-String _$feedRepositoryHash() => r'5a2cd3a27b1bf0e9ec5e364f8a3cf6c8e766341a';
+String _$feedRepositoryHash() => r'e1a7457b9de9935c1cef0763d9e02434e2846be6';
 
 @ProviderFor(getPostsUseCase)
 final getPostsUseCaseProvider = GetPostsUseCaseProvider._();
@@ -138,7 +138,7 @@ final class GetPostsUseCaseProvider
   }
 }
 
-String _$getPostsUseCaseHash() => r'adb1fd9e8f9483659ed0380fb65f4980be5b4b10';
+String _$getPostsUseCaseHash() => r'04d5994957f2449d155ea1dd292de1225b6792d9';
 
 @ProviderFor(createPostUseCase)
 final createPostUseCaseProvider = CreatePostUseCaseProvider._();
@@ -185,7 +185,7 @@ final class CreatePostUseCaseProvider
   }
 }
 
-String _$createPostUseCaseHash() => r'66bfbb719bfa0a445f38bddfed085178353104b9';
+String _$createPostUseCaseHash() => r'd88ae9f0732694db221979f105b864a8e37e3597';
 
 @ProviderFor(likePostUseCase)
 final likePostUseCaseProvider = LikePostUseCaseProvider._();
@@ -227,4 +227,4 @@ final class LikePostUseCaseProvider
   }
 }
 
-String _$likePostUseCaseHash() => r'8a882a3674620d3215377318879549f1d67a5f9f';
+String _$likePostUseCaseHash() => r'f0285919333fa863fd90083c609ab9dcc0d48606';

@@ -54,7 +54,7 @@ final class SecureStorageProvider
   }
 }
 
-String _$secureStorageHash() => r'1803ee54eebc4038de1cd19ff9f0850676721a7f';
+String _$secureStorageHash() => r'a4f75721472cf77465bf47f759c90de5ca30856e';
 
 @ProviderFor(dioClient)
 final dioClientProvider = DioClientProvider._();
@@ -95,7 +95,7 @@ final class DioClientProvider
   }
 }
 
-String _$dioClientHash() => r'f51d9f6a4e298ff88379fa289cc7470b678614f1';
+String _$dioClientHash() => r'4d7abbe974016e536a3e41b1bba1e4004cde168f';
 
 @ProviderFor(apiClient)
 final apiClientProvider = ApiClientProvider._();
@@ -136,7 +136,7 @@ final class ApiClientProvider
   }
 }
 
-String _$apiClientHash() => r'cbf3b7f6e3f9431ecdacac94df2201b98b0aec73';
+String _$apiClientHash() => r'334182514caf19221176d0d0fb9c498d0ce800bf';
 
 @ProviderFor(authRemoteDataSource)
 final authRemoteDataSourceProvider = AuthRemoteDataSourceProvider._();
@@ -184,7 +184,7 @@ final class AuthRemoteDataSourceProvider
 }
 
 String _$authRemoteDataSourceHash() =>
-    r'81e2f0bb3d2d102eee58da83dc2ecea8551e2e25';
+    r'27cf7602a1d8c74fd8d08a65a9c8e1803713365b';
 
 @ProviderFor(authRepository)
 final authRepositoryProvider = AuthRepositoryProvider._();
@@ -225,7 +225,7 @@ final class AuthRepositoryProvider
   }
 }
 
-String _$authRepositoryHash() => r'470c99b690ead1be8857668cf09b68f40dac1fb2';
+String _$authRepositoryHash() => r'214302ada98dd01a4decde643914b36b035ae520';
 
 @ProviderFor(loginUseCase)
 final loginUseCaseProvider = LoginUseCaseProvider._();
@@ -266,7 +266,7 @@ final class LoginUseCaseProvider
   }
 }
 
-String _$loginUseCaseHash() => r'0e7afee1ae08672bd0eef20379802273225802d1';
+String _$loginUseCaseHash() => r'cbfd4200f40c132516f20f942ae9d825a31e2515';
 
 @ProviderFor(registerUseCase)
 final registerUseCaseProvider = RegisterUseCaseProvider._();
@@ -308,7 +308,7 @@ final class RegisterUseCaseProvider
   }
 }
 
-String _$registerUseCaseHash() => r'84c2c6ba2489fecb8ef86cb1083513cbbc2a400a';
+String _$registerUseCaseHash() => r'8f0345823563b5c2c5b02cd4625f0a8048d56e88';
 
 @ProviderFor(logoutUseCase)
 final logoutUseCaseProvider = LogoutUseCaseProvider._();
@@ -349,7 +349,7 @@ final class LogoutUseCaseProvider
   }
 }
 
-String _$logoutUseCaseHash() => r'38998edfb7c9086eff09011ab46b35cac779581a';
+String _$logoutUseCaseHash() => r'67224f00aebb158eab2aba2c4398e98150dd958c';
 
 @ProviderFor(getCurrentUserUseCase)
 final getCurrentUserUseCaseProvider = GetCurrentUserUseCaseProvider._();
@@ -397,7 +397,7 @@ final class GetCurrentUserUseCaseProvider
 }
 
 String _$getCurrentUserUseCaseHash() =>
-    r'ea8cf58eff2fc73ff2660f033c45254e07e41809';
+    r'1e9d6222283b80c2b6fc6ed8c89f4130614c0a11';
 
 @ProviderFor(userStream)
 final userStreamProvider = UserStreamProvider._();
@@ -430,4 +430,4 @@ final class UserStreamProvider
   }
 }
 
-String _$userStreamHash() => r'a5a5c1b16e585e8f0612ec8b730614bfde272198';
+String _$userStreamHash() => r'31912853fc0e9a5db3cddb83150c2c801e816992';

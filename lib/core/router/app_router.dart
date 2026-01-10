@@ -24,7 +24,7 @@ class RouterNotifier extends ChangeNotifier {
   bool _isAuth = false;
 
   RouterNotifier(this._ref) {
-    _ref.listen(authNotifierProvider, (_, state) {
+    _ref.listen(authProvider, (_, state) {
       final isAuth = state.isAuthenticated;
       if (_isAuth != isAuth) {
         _isAuth = isAuth;
@@ -37,13 +37,13 @@ class RouterNotifier extends ChangeNotifier {
 }
 
 @riverpod
-RouterNotifier routerNotifier(RouterNotifierRef ref) {
+RouterNotifier authRouterNotifier(Ref ref) {
   return RouterNotifier(ref);
 }
 
 @riverpod
-GoRouter router(RouterRef ref) {
-  final notifier = ref.watch(routerNotifierProvider);
+GoRouter goRouter(Ref ref) {
+  final notifier = ref.watch(authRouterProvider);
 
   return GoRouter(
     refreshListenable: notifier,

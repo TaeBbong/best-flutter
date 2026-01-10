@@ -14,27 +14,27 @@ part 'auth_providers.g.dart';
 
 // Secure Storage Provider
 @Riverpod(keepAlive: true)
-FlutterSecureStorage secureStorage(SecureStorageRef ref) {
+FlutterSecureStorage secureStorage(Ref ref) {
   return const FlutterSecureStorage();
 }
 
 // Dio Client Provider
 @Riverpod(keepAlive: true)
-DioClient dioClient(DioClientRef ref) {
+DioClient dioClient(Ref ref) {
   final secureStorage = ref.watch(secureStorageProvider);
   return DioClient(secureStorage);
 }
 
 // API Client Provider
 @Riverpod(keepAlive: true)
-ApiClient apiClient(ApiClientRef ref) {
+ApiClient apiClient(Ref ref) {
   final dioClient = ref.watch(dioClientProvider);
   return ApiClient(dioClient.dio);
 }
 
 // Data Source Provider
 @Riverpod(keepAlive: true)
-AuthRemoteDataSource authRemoteDataSource(AuthRemoteDataSourceRef ref) {
+AuthRemoteDataSource authRemoteDataSource(Ref ref) {
   final apiClient = ref.watch(apiClientProvider);
   final secureStorage = ref.watch(secureStorageProvider);
   return AuthRemoteDataSourceImpl(apiClient, secureStorage);
@@ -42,39 +42,39 @@ AuthRemoteDataSource authRemoteDataSource(AuthRemoteDataSourceRef ref) {
 
 // Repository Provider
 @Riverpod(keepAlive: true)
-AuthRepository authRepository(AuthRepositoryRef ref) {
+AuthRepository authRepository(Ref ref) {
   final remoteDataSource = ref.watch(authRemoteDataSourceProvider);
   return AuthRepositoryImpl(remoteDataSource);
 }
 
 // UseCase Providers
 @riverpod
-LoginUseCase loginUseCase(LoginUseCaseRef ref) {
+LoginUseCase loginUseCase(Ref ref) {
   final repository = ref.watch(authRepositoryProvider);
   return LoginUseCase(repository);
 }
 
 @riverpod
-RegisterUseCase registerUseCase(RegisterUseCaseRef ref) {
+RegisterUseCase registerUseCase(Ref ref) {
   final repository = ref.watch(authRepositoryProvider);
   return RegisterUseCase(repository);
 }
 
 @riverpod
-LogoutUseCase logoutUseCase(LogoutUseCaseRef ref) {
+LogoutUseCase logoutUseCase(Ref ref) {
   final repository = ref.watch(authRepositoryProvider);
   return LogoutUseCase(repository);
 }
 
 @riverpod
-GetCurrentUserUseCase getCurrentUserUseCase(GetCurrentUserUseCaseRef ref) {
+GetCurrentUserUseCase getCurrentUserUseCase(Ref ref) {
   final repository = ref.watch(authRepositoryProvider);
   return GetCurrentUserUseCase(repository);
 }
 
 // User Stream Provider
 @riverpod
-Stream<dynamic> userStream(UserStreamRef ref) {
+Stream<dynamic> userStream(Ref ref) {
   final repository = ref.watch(authRepositoryProvider);
   return repository.userStream;
 }
