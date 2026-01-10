@@ -28,16 +28,16 @@ import '../error/result.dart';
 ///   LoginParams({required this.email, required this.password});
 /// }
 /// ```
-abstract class UseCase<Type, Params> {
-  Future<Result<Type>> call(Params params);
+abstract class UseCase<T, Params> {
+  Future<Result<T>> call(Params params);
 }
 
 /// 파라미터가 없는 UseCase
-abstract class NoParamsUseCase<Type> {
-  Future<Result<Type>> call();
+abstract class NoParamsUseCase<T> {
+  Future<Result<T>> call();
 }
 
 /// Stream을 반환하는 UseCase
-abstract class StreamUseCase<Type, Params> {
-  Stream<Type> call(Params params);
+abstract class StreamUseCase<T, Params> {
+  Stream<T> call(Params params);
 }

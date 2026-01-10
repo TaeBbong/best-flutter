@@ -6,7 +6,11 @@ class LikePostUseCase {
 
   LikePostUseCase(this._repository);
 
-  Future<Result<void>> call(String postId) {
-    return _repository.likePost(postId);
+  Future<Result<void>> call({required String postId, required bool like}) {
+    if (like) {
+      return _repository.likePost(postId);
+    } else {
+      return _repository.unlikePost(postId);
+    }
   }
 }
