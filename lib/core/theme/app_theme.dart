@@ -11,7 +11,6 @@ class AppTheme {
         primary: AppColors.primary,
         secondary: AppColors.secondary,
         error: AppColors.error,
-        background: AppColors.background,
         surface: AppColors.surface,
       ),
       scaffoldBackgroundColor: AppColors.background,
@@ -102,7 +101,7 @@ class AppTheme {
       ),
 
       // Card Theme
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -129,7 +128,6 @@ class AppTheme {
         primary: AppColors.primary,
         secondary: AppColors.secondary,
         error: AppColors.error,
-        background: AppColors.backgroundDark,
         surface: AppColors.surfaceDark,
         brightness: Brightness.dark,
       ),
@@ -176,11 +174,11 @@ class AppTheme {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: AppColors.textSecondaryDark.withOpacity(0.3)),
+          borderSide: BorderSide(color: AppColors.textSecondaryDark.withValues(alpha: 0.3)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: AppColors.textSecondaryDark.withOpacity(0.3)),
+          borderSide: BorderSide(color: AppColors.textSecondaryDark.withValues(alpha: 0.3)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -188,11 +186,11 @@ class AppTheme {
         ),
       ),
 
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: AppColors.textSecondaryDark.withOpacity(0.2)),
+          side: BorderSide(color: AppColors.textSecondaryDark.withValues(alpha: 0.2)),
         ),
         color: AppColors.surfaceDark,
       ),
