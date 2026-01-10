@@ -32,7 +32,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
 
     setState(() => _isSubmitting = true);
 
-    final success = await ref.read(feedNotifierProvider.notifier).createPost(
+    final success = await ref.read(feedProvider.notifier).createPost(
           content: content,
         );
 

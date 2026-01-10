@@ -25,7 +25,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
-      ref.read(authStateProvider.notifier).login(
+      ref.read(authProvider.notifier).login(
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
@@ -34,10 +34,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authStateProvider);
+    final authState = ref.watch(authProvider);
 
     // 에러가 있을 때 스낵바 표시
-    ref.listen<AuthState>(authStateProvider, (previous, next) {
+    ref.listen<AuthState>(authProvider, (previous, next) {
       if (next.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -45,7 +45,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
-        ref.read(authStateProvider.notifier).clearError();
+        ref.read(authProvider.notifier).clearError();
       }
     });
 

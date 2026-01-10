@@ -11,7 +11,7 @@ class FeedPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final feedAsync = ref.watch(feedNotifierProvider);
+    final feedAsync = ref.watch(feedProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -49,7 +49,7 @@ class FeedPage extends ConsumerWidget {
               ),
               const SizedBox(height: AppTheme.spacingLg),
               ElevatedButton.icon(
-                onPressed: () => ref.read(feedNotifierProvider.notifier).refresh(),
+                onPressed: () => ref.read(feedProvider.notifier).refresh(),
                 icon: const Icon(Icons.refresh),
                 label: const Text('Retry'),
               ),
@@ -101,13 +101,13 @@ class _FeedContent extends ConsumerWidget {
     }
 
     return RefreshIndicator(
-      onRefresh: () => ref.read(feedNotifierProvider.notifier).refresh(),
+      onRefresh: () => ref.read(feedProvider.notifier).refresh(),
       child: NotificationListener<ScrollNotification>(
         onNotification: (notification) {
           if (notification is ScrollEndNotification) {
             final metrics = notification.metrics;
             if (metrics.pixels >= metrics.maxScrollExtent - 200) {
-              ref.read(feedNotifierProvider.notifier).loadMore();
+              ref.read(feedProvider.notifier).loadMore();
             }
           }
           return false;
@@ -129,7 +129,7 @@ class _FeedContent extends ConsumerWidget {
             final post = feedState.posts[index];
             return PostCard(
               post: post,
-              onLike: () => ref.read(feedNotifierProvider.notifier).toggleLike(post.id),
+              onLike: () => ref.read(feedProvider.notifier).toggleLike(post.id),
               onTap: () {
                 // Navigate to post detail
               },
