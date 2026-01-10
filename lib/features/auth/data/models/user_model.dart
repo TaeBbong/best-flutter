@@ -4,10 +4,22 @@ import '../../domain/entities/user.dart';
 part 'user_model.freezed.dart';
 part 'user_model.g.dart';
 
+/// Data model for user information from the API.
+///
+/// This model is used to parse API responses and convert between
+/// the data layer and domain layer representations of a user.
 @freezed
 abstract class UserModel with _$UserModel {
   const UserModel._();
 
+  /// Creates a [UserModel] instance.
+  ///
+  /// - [id]: Unique identifier for the user.
+  /// - [email]: User's email address.
+  /// - [username]: User's display name.
+  /// - [profileImageUrl]: Optional URL to the user's profile image.
+  /// - [bio]: Optional user biography or description.
+  /// - [createdAt]: Timestamp when the user account was created.
   const factory UserModel({
     required String id,
     required String email,
@@ -17,10 +29,11 @@ abstract class UserModel with _$UserModel {
     required DateTime createdAt,
   }) = _UserModel;
 
+  /// Creates a [UserModel] from a JSON map.
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
 
-  // Model -> Entity 변환
+  /// Converts this model to a domain [User] entity.
   User toEntity() {
     return User(
       id: id,
@@ -32,7 +45,7 @@ abstract class UserModel with _$UserModel {
     );
   }
 
-  // Entity -> Model 변환
+  /// Creates a [UserModel] from a domain [User] entity.
   factory UserModel.fromEntity(User user) {
     return UserModel(
       id: user.id,

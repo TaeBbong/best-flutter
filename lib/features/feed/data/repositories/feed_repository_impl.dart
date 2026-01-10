@@ -5,9 +5,14 @@ import '../../domain/entities/post.dart';
 import '../../domain/repositories/feed_repository.dart';
 import '../datasources/feed_remote_datasource.dart';
 
+/// Implementation of [FeedRepository] using remote data source.
+///
+/// Handles the actual data operations for the feed, including
+/// error handling and data transformation between layers.
 class FeedRepositoryImpl implements FeedRepository {
   final FeedRemoteDataSource _remoteDataSource;
 
+  /// Creates a [FeedRepositoryImpl] with the given data source.
   FeedRepositoryImpl(this._remoteDataSource);
 
   @override

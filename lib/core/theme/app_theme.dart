@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
 
+/// Defines the application themes for both light and dark modes.
+///
+/// Provides [ThemeData] configurations with Material 3 design and
+/// custom styling for all common widgets including buttons, inputs,
+/// cards, and text.
 class AppTheme {
+  /// Returns the light theme configuration.
+  ///
+  /// Uses [AppColors] and [AppTextStyles] for consistent styling.
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
@@ -119,6 +127,9 @@ class AppTheme {
     );
   }
 
+  /// Returns the dark theme configuration.
+  ///
+  /// Uses dark mode variants from [AppColors] for proper contrast.
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
@@ -197,16 +208,34 @@ class AppTheme {
     );
   }
 
-  // Spacing
+  // ============ Spacing Constants ============
+
+  /// Extra small spacing (4.0).
   static const double spacingXs = 4.0;
+
+  /// Small spacing (8.0).
   static const double spacingSm = 8.0;
+
+  /// Medium spacing (16.0).
   static const double spacingMd = 16.0;
+
+  /// Large spacing (24.0).
   static const double spacingLg = 24.0;
+
+  /// Extra large spacing (32.0).
   static const double spacingXl = 32.0;
 
-  // Border Radius
+  // ============ Border Radius Constants ============
+
+  /// Small border radius (4.0).
   static const double radiusSm = 4.0;
+
+  /// Medium border radius (8.0).
   static const double radiusMd = 8.0;
+
+  /// Large border radius (12.0).
   static const double radiusLg = 12.0;
+
+  /// Extra large border radius (16.0).
   static const double radiusXl = 16.0;
 }

@@ -1,11 +1,19 @@
-// 참고: 프로젝트가 커지고 UseCase가 많아질 경우 아래 추상 클래스 사용 고려
-// 현재는 프로젝트 규모가 작아 개별 UseCase 클래스로 구현
+// Note: Consider using these abstract classes as the project grows
+// and the number of UseCases increases. Currently, the project is small
+// enough that individual UseCase classes are implemented directly.
 
 import '../error/result.dart';
 
-/// UseCase가 많아질 경우 사용할 수 있는 추상 클래스
+/// Abstract base class for use cases that require parameters.
 ///
-/// 사용 예시:
+/// Use cases encapsulate a single unit of business logic and provide
+/// a consistent interface for the presentation layer to execute operations.
+///
+/// Type parameters:
+/// - [T]: The type of data returned on success
+/// - [Params]: The type of parameters required by the use case
+///
+/// Example:
 /// ```dart
 /// class LoginUseCase extends UseCase<User, LoginParams> {
 ///   final AuthRepository _repository;
@@ -29,15 +37,55 @@ import '../error/result.dart';
 /// }
 /// ```
 abstract class UseCase<T, Params> {
+  /// Executes the use case with the given parameters.
+  ///
+  /// Returns a [Result] containing either the success data or a failure.
   Future<Result<T>> call(Params params);
 }
 
-/// 파라미터가 없는 UseCase
+/// Abstract base class for use cases that don't require parameters.
+///
+/// Use this when the operation doesn't need any input parameters.
+///
+/// Example:
+/// ```dart
+/// class GetCurrentUserUseCase extends NoParamsUseCase<User> {
+///   final AuthRepository _repository;
+///
+///   GetCurrentUserUseCase(this._repository);
+///
+///   @override
+///   Future<Result<User>> call() {
+///     return _repository.getCurrentUser();
+///   }
+/// }
+/// ```
 abstract class NoParamsUseCase<T> {
+  /// Executes the use case without any parameters.
+  ///
+  /// Returns a [Result] containing either the success data or a failure.
   Future<Result<T>> call();
 }
 
-/// Stream을 반환하는 UseCase
+/// Abstract base class for use cases that return a stream of data.
+///
+/// Use this for operations that emit multiple values over time,
+/// such as real-time updates or paginated data.
+///
+/// Example:
+/// ```dart
+/// class WatchUserUseCase extends StreamUseCase<User, String> {
+///   final UserRepository _repository;
+///
+///   WatchUserUseCase(this._repository);
+///
+///   @override
+///   Stream<User> call(String userId) {
+///     return _repository.watchUser(userId);
+///   }
+/// }
+/// ```
 abstract class StreamUseCase<T, Params> {
+  /// Executes the use case and returns a stream of data.
   Stream<T> call(Params params);
 }

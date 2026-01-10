@@ -8,21 +8,39 @@ import '../../features/feed/presentation/pages/feed_page.dart';
 
 part 'app_router.g.dart';
 
-// Route paths
+/// Contains all route path constants used in the application.
+///
+/// Use these constants instead of hardcoding path strings to avoid typos
+/// and enable easy refactoring.
 abstract class AppRoutes {
+  /// Splash screen route.
   static const splash = '/splash';
+
+  /// Login page route.
   static const login = '/login';
+
+  /// Registration page route.
   static const register = '/register';
+
+  /// Main feed (home) page route.
   static const feed = '/';
+
+  /// Create new post page route.
   static const createPost = '/create-post';
+
+  /// Post detail page route with dynamic ID parameter.
   static const postDetail = '/post/:id';
 }
 
-// Router Notifier for auth state changes
+/// A ChangeNotifier that listens to authentication state changes.
+///
+/// This notifier is used by GoRouter to trigger route re-evaluation
+/// when the user's authentication status changes.
 class RouterNotifier extends ChangeNotifier {
   final Ref _ref;
   bool _isAuth = false;
 
+  /// Creates a [RouterNotifier] that listens to the auth provider.
   RouterNotifier(this._ref) {
     _ref.listen(authProvider, (_, state) {
       final isAuth = state.isAuthenticated;
@@ -33,14 +51,22 @@ class RouterNotifier extends ChangeNotifier {
     });
   }
 
+  /// Returns `true` if the user is currently authenticated.
   bool get isAuthenticated => _isAuth;
 }
 
+/// Provider for the [RouterNotifier] that tracks authentication state.
 @riverpod
 RouterNotifier authRouterNotifier(Ref ref) {
   return RouterNotifier(ref);
 }
 
+/// Provider for the main [GoRouter] instance.
+///
+/// Configures the router with:
+/// - Authentication-based redirects
+/// - Route definitions for all pages
+/// - Error page handling
 @riverpod
 GoRouter goRouter(Ref ref) {
   final notifier = ref.watch(authRouterProvider);
@@ -54,14 +80,14 @@ GoRouter goRouter(Ref ref) {
       final isLoggingIn = state.matchedLocation == AppRoutes.login;
       final isRegistering = state.matchedLocation == AppRoutes.register;
 
-      // 로그인하지 않은 상태에서 보호된 페이지 접근 시 로그인으로 리다이렉트
-      // 현재는 인증 없이도 피드를 볼 수 있도록 설정 (SNS 앱 특성)
-      // 필요시 아래 주석 해제
+      // Redirect to login if accessing protected pages while not logged in.
+      // Currently disabled to allow viewing feed without authentication (SNS app behavior).
+      // Uncomment below to enable authentication requirement.
       // if (!isLoggedIn && !isLoggingIn && !isRegistering) {
       //   return AppRoutes.login;
       // }
 
-      // 이미 로그인한 상태에서 로그인/회원가입 페이지 접근 시 피드로 리다이렉트
+      // Redirect to feed if already logged in and trying to access login/register
       if (isLoggedIn && (isLoggingIn || isRegistering)) {
         return AppRoutes.feed;
       }
@@ -69,35 +95,35 @@ GoRouter goRouter(Ref ref) {
       return null;
     },
     routes: [
-      // Feed (Home)
+      // Feed (Home) route
       GoRoute(
         path: AppRoutes.feed,
         name: 'feed',
         builder: (context, state) => const FeedPage(),
       ),
 
-      // Create Post
+      // Create Post route
       GoRoute(
         path: AppRoutes.createPost,
         name: 'createPost',
         builder: (context, state) => const CreatePostPage(),
       ),
 
-      // Login
+      // Login route
       GoRoute(
         path: AppRoutes.login,
         name: 'login',
         builder: (context, state) => const LoginPage(),
       ),
 
-      // Register (TODO: RegisterPage 구현 필요)
+      // Register route (TODO: Implement RegisterPage)
       // GoRoute(
       //   path: AppRoutes.register,
       //   name: 'register',
       //   builder: (context, state) => const RegisterPage(),
       // ),
 
-      // Post Detail (TODO: PostDetailPage 구현 필요)
+      // Post Detail route (TODO: Implement PostDetailPage)
       // GoRoute(
       //   path: AppRoutes.postDetail,
       //   name: 'postDetail',

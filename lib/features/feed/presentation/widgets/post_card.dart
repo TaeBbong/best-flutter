@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/post.dart';
 
+/// Card widget displaying a single post.
+///
+/// Shows author info, content, optional images, and action buttons
+/// for liking, commenting, and sharing.
 class PostCard extends StatelessWidget {
+  /// Creates a [PostCard] with the given post data and callbacks.
   const PostCard({
     super.key,
     required this.post,
@@ -10,8 +15,13 @@ class PostCard extends StatelessWidget {
     this.onTap,
   });
 
+  /// The post data to display.
   final Post post;
+
+  /// Callback when the like button is pressed.
   final VoidCallback onLike;
+
+  /// Optional callback when the card is tapped.
   final VoidCallback? onTap;
 
   @override
@@ -158,6 +168,10 @@ class PostCard extends StatelessWidget {
     );
   }
 
+  /// Formats a [DateTime] as a human-readable relative time string.
+  ///
+  /// Returns formats like "Just now", "5m ago", "2h ago", "3d ago",
+  /// or the full date for posts older than a week.
   String _formatTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
@@ -176,7 +190,11 @@ class PostCard extends StatelessWidget {
   }
 }
 
+/// Action button for post interactions (like, comment, share).
+///
+/// Displays an icon and label with optional custom color.
 class _ActionButton extends StatelessWidget {
+  /// Creates an [_ActionButton] with the given properties.
   const _ActionButton({
     required this.icon,
     required this.label,
@@ -184,9 +202,16 @@ class _ActionButton extends StatelessWidget {
     this.color,
   });
 
+  /// The icon to display.
   final IconData icon;
+
+  /// The label text to display.
   final String label;
+
+  /// Callback when the button is pressed.
   final VoidCallback onPressed;
+
+  /// Optional custom color for the icon and label.
   final Color? color;
 
   @override

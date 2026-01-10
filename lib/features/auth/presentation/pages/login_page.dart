@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../providers/auth_state_provider.dart';
 
+/// Login page for user authentication.
+///
+/// Provides a form for email and password input with validation.
+/// Shows loading state during authentication and error messages on failure.
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
@@ -23,6 +27,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     super.dispose();
   }
 
+  /// Validates the form and initiates login if valid.
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
       ref.read(authProvider.notifier).login(
@@ -36,7 +41,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
 
-    // 에러가 있을 때 스낵바 표시
+    // Show error snackbar when an error occurs
     ref.listen<AuthState>(authProvider, (previous, next) {
       if (next.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -133,7 +138,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        // Navigate to forgot password
+                        // TODO: Navigate to forgot password
                       },
                       child: const Text('Forgot Password?'),
                     ),
@@ -160,7 +165,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       const Text("Don't have an account?"),
                       TextButton(
                         onPressed: () {
-                          // Navigate to register page
+                          // TODO: Navigate to register page
                         },
                         child: const Text('Sign Up'),
                       ),

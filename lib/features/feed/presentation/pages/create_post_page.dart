@@ -4,13 +4,21 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../providers/feed_state_provider.dart';
 
+/// Page for creating a new post.
+///
+/// Provides a text input for post content and media attachment options.
+/// Validates input before submission and shows appropriate feedback.
 class CreatePostPage extends ConsumerStatefulWidget {
+  /// Creates a [CreatePostPage] widget.
   const CreatePostPage({super.key});
 
   @override
   ConsumerState<CreatePostPage> createState() => _CreatePostPageState();
 }
 
+/// State for [CreatePostPage].
+///
+/// Manages the content text controller and submission state.
 class _CreatePostPageState extends ConsumerState<CreatePostPage> {
   final _contentController = TextEditingController();
   bool _isSubmitting = false;
@@ -21,6 +29,10 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     super.dispose();
   }
 
+  /// Handles the post submission process.
+  ///
+  /// Validates content is not empty, calls the create post API,
+  /// and navigates back on success with a success snackbar.
   Future<void> _handleSubmit() async {
     final content = _contentController.text.trim();
     if (content.isEmpty) {
@@ -127,15 +139,24 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
   }
 }
 
+/// Button widget for media attachment options.
+///
+/// Displays an icon and label in a tappable row format.
 class _MediaButton extends StatelessWidget {
+  /// Creates a [_MediaButton] with the given icon, label, and callback.
   const _MediaButton({
     required this.icon,
     required this.label,
     required this.onTap,
   });
 
+  /// The icon to display.
   final IconData icon;
+
+  /// The label text to display next to the icon.
   final String label;
+
+  /// Callback when the button is tapped.
   final VoidCallback onTap;
 
   @override

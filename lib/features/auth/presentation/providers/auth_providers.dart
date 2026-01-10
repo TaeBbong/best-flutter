@@ -12,27 +12,43 @@ import '../../domain/usecases/register_usecase.dart';
 
 part 'auth_providers.g.dart';
 
-// Secure Storage Provider
+// ============ Infrastructure Providers ============
+
+/// Provider for [FlutterSecureStorage] instance.
+///
+/// Used for securely storing authentication tokens.
+/// Kept alive for the app's lifetime.
 @Riverpod(keepAlive: true)
 FlutterSecureStorage secureStorage(Ref ref) {
   return const FlutterSecureStorage();
 }
 
-// Dio Client Provider
+/// Provider for configured [DioClient] instance.
+///
+/// Sets up Dio with interceptors for authentication and logging.
+/// Kept alive for the app's lifetime.
 @Riverpod(keepAlive: true)
 DioClient dioClient(Ref ref) {
   final secureStorage = ref.watch(secureStorageProvider);
   return DioClient(secureStorage);
 }
 
-// API Client Provider
+/// Provider for [ApiClient] instance.
+///
+/// Provides typed methods for all API endpoints.
+/// Kept alive for the app's lifetime.
 @Riverpod(keepAlive: true)
 ApiClient apiClient(Ref ref) {
   final dioClient = ref.watch(dioClientProvider);
   return ApiClient(dioClient.dio);
 }
 
-// Data Source Provider
+// ============ Data Layer Providers ============
+
+/// Provider for [AuthRemoteDataSource] implementation.
+///
+/// Handles authentication API calls and token storage.
+/// Kept alive for the app's lifetime.
 @Riverpod(keepAlive: true)
 AuthRemoteDataSource authRemoteDataSource(Ref ref) {
   final apiClient = ref.watch(apiClientProvider);
@@ -40,39 +56,51 @@ AuthRemoteDataSource authRemoteDataSource(Ref ref) {
   return AuthRemoteDataSourceImpl(apiClient, secureStorage);
 }
 
-// Repository Provider
+/// Provider for [AuthRepository] implementation.
+///
+/// Bridges between use cases and data sources.
+/// Kept alive for the app's lifetime.
 @Riverpod(keepAlive: true)
 AuthRepository authRepository(Ref ref) {
   final remoteDataSource = ref.watch(authRemoteDataSourceProvider);
   return AuthRepositoryImpl(remoteDataSource);
 }
 
-// UseCase Providers
+// ============ UseCase Providers ============
+
+/// Provider for [LoginUseCase].
 @riverpod
 LoginUseCase loginUseCase(Ref ref) {
   final repository = ref.watch(authRepositoryProvider);
   return LoginUseCase(repository);
 }
 
+/// Provider for [RegisterUseCase].
 @riverpod
 RegisterUseCase registerUseCase(Ref ref) {
   final repository = ref.watch(authRepositoryProvider);
   return RegisterUseCase(repository);
 }
 
+/// Provider for [LogoutUseCase].
 @riverpod
 LogoutUseCase logoutUseCase(Ref ref) {
   final repository = ref.watch(authRepositoryProvider);
   return LogoutUseCase(repository);
 }
 
+/// Provider for [GetCurrentUserUseCase].
 @riverpod
 GetCurrentUserUseCase getCurrentUserUseCase(Ref ref) {
   final repository = ref.watch(authRepositoryProvider);
   return GetCurrentUserUseCase(repository);
 }
 
-// User Stream Provider
+// ============ Stream Providers ============
+
+/// Provider for the user authentication state stream.
+///
+/// Emits the current user when authenticated, or null when logged out.
 @riverpod
 Stream<dynamic> userStream(Ref ref) {
   final repository = ref.watch(authRepositoryProvider);

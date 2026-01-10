@@ -6,10 +6,17 @@ import 'auth_providers.dart';
 
 part 'auth_state_provider.g.dart';
 
-// Auth State
+/// Represents the authentication state of the application.
+///
+/// Holds the current user, loading status, and any error that occurred.
 class AuthState {
+  /// The currently authenticated user, or null if not logged in.
   final User? user;
+
+  /// Whether an authentication operation is in progress.
   final bool isLoading;
+
+  /// The error from the last failed operation, if any.
   final Failure? error;
 
   const AuthState({
@@ -18,6 +25,10 @@ class AuthState {
     this.error,
   });
 
+  /// Creates a copy of this state with the given fields replaced.
+  ///
+  /// Use [clearUser] to explicitly set user to null.
+  /// Use [clearError] to explicitly set error to null.
   AuthState copyWith({
     User? user,
     bool? isLoading,
@@ -32,15 +43,24 @@ class AuthState {
     );
   }
 
+  /// Returns `true` if a user is currently authenticated.
   bool get isAuthenticated => user != null;
 }
 
-// Auth State Notifier
+/// Notifier that manages the authentication state.
+///
+/// Provides methods for login, register, logout, and error handling.
+/// The state is kept alive for the app's lifetime.
 @Riverpod(keepAlive: true)
 class AuthNotifier extends _$AuthNotifier {
   @override
   AuthState build() => const AuthState();
 
+  /// Attempts to log in with the given credentials.
+  ///
+  /// Sets [AuthState.isLoading] to true during the operation.
+  /// On success, updates [AuthState.user] with the authenticated user.
+  /// On failure, updates [AuthState.error] with the failure details.
   Future<void> login({
     required String email,
     required String password,
@@ -60,6 +80,11 @@ class AuthNotifier extends _$AuthNotifier {
     );
   }
 
+  /// Attempts to register a new account with the given details.
+  ///
+  /// Sets [AuthState.isLoading] to true during the operation.
+  /// On success, updates [AuthState.user] with the new user.
+  /// On failure, updates [AuthState.error] with the failure details.
   Future<void> register({
     required String email,
     required String password,
@@ -84,6 +109,11 @@ class AuthNotifier extends _$AuthNotifier {
     );
   }
 
+  /// Logs out the current user.
+  ///
+  /// Clears all user data and authentication tokens.
+  /// On success, resets state to initial empty state.
+  /// On failure, updates [AuthState.error] with the failure details.
   Future<void> logout() async {
     state = state.copyWith(isLoading: true);
 
@@ -100,6 +130,9 @@ class AuthNotifier extends _$AuthNotifier {
     );
   }
 
+  /// Clears the current error from state.
+  ///
+  /// Should be called after displaying an error to the user.
   void clearError() {
     state = state.copyWith(clearError: true);
   }

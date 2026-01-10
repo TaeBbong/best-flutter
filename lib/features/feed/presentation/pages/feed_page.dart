@@ -6,7 +6,12 @@ import '../../../../core/theme/app_theme.dart';
 import '../providers/feed_state_provider.dart';
 import '../widgets/post_card.dart';
 
+/// Main feed page displaying a scrollable list of posts.
+///
+/// Shows loading, error, and empty states appropriately.
+/// Supports pull-to-refresh and infinite scroll pagination.
 class FeedPage extends ConsumerWidget {
+  /// Creates a [FeedPage] widget.
   const FeedPage({super.key});
 
   @override
@@ -62,9 +67,15 @@ class FeedPage extends ConsumerWidget {
   }
 }
 
+/// Internal widget for displaying the feed content.
+///
+/// Shows an empty state message when no posts exist,
+/// otherwise displays a scrollable list with pagination support.
 class _FeedContent extends ConsumerWidget {
+  /// Creates a [_FeedContent] widget with the given feed state.
   const _FeedContent({required this.feedState});
 
+  /// The current feed state containing posts and pagination info.
   final FeedState feedState;
 
   @override

@@ -6,10 +6,15 @@ import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_datasource.dart';
 
+/// Implementation of [AuthRepository] using remote data source.
+///
+/// Handles the actual data operations for authentication, including
+/// error handling and data transformation between layers.
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
   final StreamController<User?> _userController = StreamController<User?>.broadcast();
 
+  /// Creates an [AuthRepositoryImpl] with the given data source.
   AuthRepositoryImpl(this._remoteDataSource);
 
   @override
@@ -105,6 +110,9 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Stream<User?> get userStream => _userController.stream;
 
+  /// Disposes of the user stream controller.
+  ///
+  /// Should be called when the repository is no longer needed.
   void dispose() {
     _userController.close();
   }
