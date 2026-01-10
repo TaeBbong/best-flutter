@@ -29,9 +29,9 @@ Clean Architecture, Riverpod 3.0, go_router 등 현업에서 사용되는 최신
 | **riverpod_annotation** | 4.0.0 | 코드 생성 | 보일러플레이트 감소, 타입 안전성 향상 |
 | **go_router** | 17.0.1 | 라우팅 | 선언적 라우팅, 딥링크 지원, 인증 기반 리다이렉트 |
 | **dio** | 5.9.0 | HTTP 클라이언트 | 인터셉터, 요청 취소, 자동 재시도 지원 |
-| **retrofit** | 4.9.2 | API 클라이언트 | 타입 안전한 REST API 호출, 코드 생성 |
 | **freezed** | 3.2.3 | 불변 클래스 | copyWith, JSON 직렬화, 패턴 매칭 자동 생성 |
 | **flutter_secure_storage** | 10.0.0 | 보안 저장소 | 토큰 등 민감한 데이터 암호화 저장 |
+| **logger** | 2.6.2 | 로깅 | 개발 중 디버깅을 위한 포맷팅된 로그 출력 |
 
 ### 시작하기
 
@@ -63,7 +63,7 @@ lib/
 │   │   ├── failures.dart          # 실패 클래스
 │   │   └── result.dart            # Result<T> 타입
 │   ├── network/                   # 네트워크 계층
-│   │   ├── api_client.dart        # Retrofit API 정의
+│   │   ├── api_client.dart        # Dio 기반 API 클라이언트
 │   │   └── dio_client.dart        # Dio 설정 & 인터셉터
 │   ├── router/                    # 라우팅
 │   │   └── app_router.dart        # GoRouter 설정
@@ -72,7 +72,8 @@ lib/
 │   │   ├── app_text_styles.dart
 │   │   └── app_theme.dart
 │   └── utils/                     # 유틸리티
-│       └── app_logger.dart
+│       ├── app_logger.dart        # 로깅 유틸리티
+│       └── usecase_base.dart      # UseCase 추상 클래스 (확장용)
 │
 ├── features/                      # 기능별 모듈
 │   ├── auth/                      # 인증 기능
@@ -153,7 +154,7 @@ Presentation → Domain ← Data
        ↓
 5. [AuthRepositoryImpl] 실제 구현체가 DataSource 호출
        ↓
-6. [AuthRemoteDataSource] API 호출 (Retrofit + Dio)
+6. [AuthRemoteDataSource] API 호출 (Dio)
        ↓
 7. [서버 응답] → UserModel로 파싱
        ↓
@@ -257,12 +258,13 @@ class DioClient {
 // core/router/app_router.dart
 
 // 인증 상태 변경을 감지하는 Notifier
-class RouterNotifier extends ChangeNotifier {
+class AuthRouterNotifier extends ChangeNotifier {
   final Ref _ref;
 
-  RouterNotifier(this._ref) {
+  AuthRouterNotifier(this._ref) {
     // AuthNotifier의 상태 변경 구독
-    _ref.listen(authNotifierProvider, (_, state) {
+    // Note: Riverpod 3.x에서 생성된 provider 이름은 authProvider
+    _ref.listen(authProvider, (_, state) {
       if (_isAuth != state.isAuthenticated) {
         _isAuth = state.isAuthenticated;
         notifyListeners();  // GoRouter에 변경 알림
@@ -271,9 +273,10 @@ class RouterNotifier extends ChangeNotifier {
   }
 }
 
+// Note: Riverpod 3.x에서 생성된 provider 이름은 goRouterProvider
 @riverpod
-GoRouter router(RouterRef ref) {
-  final notifier = ref.watch(routerNotifierProvider);
+GoRouter goRouter(GoRouterRef ref) {
+  final notifier = ref.watch(authRouterNotifierProvider);
 
   return GoRouter(
     refreshListenable: notifier,  // 인증 상태 변경 시 라우트 재평가
@@ -330,8 +333,9 @@ auth/
 
 ```dart
 // domain/entities/user.dart - 비즈니스 모델 (순수)
+// Note: freezed 3.x부터는 abstract class 사용 필수
 @freezed
-class User with _$User {
+abstract class User with _$User {
   const factory User({
     required String id,
     required String email,
@@ -342,7 +346,9 @@ class User with _$User {
 
 // data/models/user_model.dart - API 응답 모델
 @freezed
-class UserModel with _$UserModel {
+abstract class UserModel with _$UserModel {
+  const UserModel._();  // 커스텀 메서드 사용을 위한 private 생성자
+
   const factory UserModel({
     required String id,
     required String email,
@@ -466,7 +472,7 @@ class FeedNotifier extends _$FeedNotifier {
 
   // Optimistic Update 예시
   Future<void> toggleLike(String postId) async {
-    final currentState = state.valueOrNull;
+    final currentState = state.value;  // Note: valueOrNull은 deprecated
     if (currentState == null) return;
 
     // 1. 즉시 UI 업데이트 (낙관적)
@@ -544,8 +550,9 @@ class User {
 }
 
 // Freezed 사용 - 간결하고 안전함
+// Note: freezed 3.x부터는 abstract class 필수
 @freezed
-class User with _$User {
+abstract class User with _$User {
   const factory User({
     required String id,
     required String name,
@@ -590,7 +597,7 @@ result.fold(
 // 1. Entity 생성
 // lib/features/feed/domain/entities/comment.dart
 @freezed
-class Comment with _$Comment {
+abstract class Comment with _$Comment {
   const factory Comment({
     required String id,
     required String postId,
@@ -643,7 +650,9 @@ class GetCommentsUseCase {
 // 1. Model 생성 (API 응답용)
 // lib/features/feed/data/models/comment_model.dart
 @freezed
-class CommentModel with _$CommentModel {
+abstract class CommentModel with _$CommentModel {
+  const CommentModel._();
+
   const factory CommentModel({
     required String id,
     @JsonKey(name: 'post_id') required String postId,
@@ -674,18 +683,31 @@ class CommentModel with _$CommentModel {
 
 ```dart
 // core/network/api_client.dart
-@GET('/posts/{id}/comments')
-Future<List<Map<String, dynamic>>> getComments(
-  @Path('id') String postId,
-  @Query('page') int page,
-  @Query('limit') int limit,
-);
+// Dio 직접 사용 방식으로 API 메서드 추가
+class ApiClient {
+  final Dio _dio;
+  ApiClient(this._dio);
 
-@POST('/posts/{id}/comments')
-Future<Map<String, dynamic>> createComment(
-  @Path('id') String postId,
-  @Body() Map<String, dynamic> body,
-);
+  Future<List<Map<String, dynamic>>> getComments(
+    String postId, {
+    required int page,
+    required int limit,
+  }) async {
+    final response = await _dio.get(
+      '/posts/$postId/comments',
+      queryParameters: {'page': page, 'limit': limit},
+    );
+    return (response.data as List).cast<Map<String, dynamic>>();
+  }
+
+  Future<Map<String, dynamic>> createComment(
+    String postId,
+    Map<String, dynamic> body,
+  ) async {
+    final response = await _dio.post('/posts/$postId/comments', data: body);
+    return response.data as Map<String, dynamic>;
+  }
+}
 ```
 
 #### Step 4: Presentation 계층
@@ -824,7 +846,70 @@ return feedAsync.when(
 );
 ```
 
-### 5. Freezed copyWith에서 null 처리
+### 5. Freezed 3.x에서 class 대신 abstract class 미사용
+
+**증상**: `mixin _$User on User` 관련 에러
+
+```
+Error: The type 'User' must be a class.
+```
+
+**해결**: freezed 3.x부터는 `abstract class` 사용 필수
+
+```dart
+// 잘못된 예 (freezed 2.x 스타일)
+@freezed
+class User with _$User {
+  const factory User(...) = _User;
+}
+
+// 올바른 예 (freezed 3.x)
+@freezed
+abstract class User with _$User {
+  const factory User(...) = _User;
+}
+
+// 커스텀 메서드가 필요한 경우 (Model 클래스 등)
+@freezed
+abstract class UserModel with _$UserModel {
+  const UserModel._();  // private 생성자 필수
+
+  const factory UserModel(...) = _UserModel;
+
+  User toEntity() => User(...);  // 커스텀 메서드
+}
+```
+
+### 6. Riverpod 3.x Provider 이름 혼동
+
+**증상**: `authNotifierProvider`를 찾을 수 없음
+
+```
+Error: The getter 'authNotifierProvider' isn't defined.
+```
+
+**원인**: riverpod_generator 4.x에서 생성되는 provider 이름 규칙 변경
+
+```dart
+// Notifier 클래스 이름
+class AuthNotifier extends _$AuthNotifier { ... }
+
+// 잘못된 예 - 이전 버전 스타일
+ref.watch(authNotifierProvider);  // X
+
+// 올바른 예 - riverpod_generator 4.x
+ref.watch(authProvider);  // O - 'Notifier' 접미사 제거됨
+
+// 함수형 provider의 경우
+@riverpod
+GoRouter goRouter(GoRouterRef ref) { ... }
+
+ref.watch(goRouterProvider);  // O
+```
+
+**팁**: 생성된 `.g.dart` 파일을 확인하면 정확한 provider 이름을 알 수 있습니다.
+
+### 7. Freezed copyWith에서 null 처리
 
 ```dart
 // 문제 - null로 설정하고 싶은데 안 됨
@@ -852,7 +937,7 @@ state = state.copyWith(clearError: true);  // 이제 null로 설정됨
 - [Riverpod 공식 문서](https://riverpod.dev)
 - [go_router 공식 문서](https://pub.dev/packages/go_router)
 - [Freezed 공식 문서](https://pub.dev/packages/freezed)
-- [Retrofit 공식 문서](https://pub.dev/packages/retrofit)
+- [Dio 공식 문서](https://pub.dev/packages/dio)
 
 ### 추천 아티클
 
