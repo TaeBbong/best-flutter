@@ -124,7 +124,7 @@ class DioClient {
         return ServerException(message, statusCode);
 
       case DioExceptionType.cancel:
-        return const AppException('Request cancelled');
+        return const UnknownException('Request cancelled');
 
       default:
         return const NetworkException('Network error occurred');

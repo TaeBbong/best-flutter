@@ -1,39 +1,50 @@
 import 'package:dio/dio.dart';
-import 'package:retrofit/retrofit.dart';
-import '../error/exceptions.dart';
 
-part 'api_client.g.dart';
+class ApiClient {
+  final Dio _dio;
 
-@RestApi(baseUrl: '')
-abstract class ApiClient {
-  factory ApiClient(Dio dio, {String baseUrl}) = _ApiClient;
+  ApiClient(this._dio);
 
   // Auth endpoints
-  @POST('/auth/login')
-  Future<Map<String, dynamic>> login(@Body() Map<String, dynamic> loginData);
+  Future<Map<String, dynamic>> login(Map<String, dynamic> loginData) async {
+    final response = await _dio.post('/auth/login', data: loginData);
+    return response.data as Map<String, dynamic>;
+  }
 
-  @POST('/auth/register')
-  Future<Map<String, dynamic>> register(@Body() Map<String, dynamic> registerData);
+  Future<Map<String, dynamic>> register(Map<String, dynamic> registerData) async {
+    final response = await _dio.post('/auth/register', data: registerData);
+    return response.data as Map<String, dynamic>;
+  }
 
-  @POST('/auth/refresh')
-  Future<Map<String, dynamic>> refreshToken(@Body() Map<String, dynamic> refreshData);
+  Future<Map<String, dynamic>> refreshToken(Map<String, dynamic> refreshData) async {
+    final response = await _dio.post('/auth/refresh', data: refreshData);
+    return response.data as Map<String, dynamic>;
+  }
 
   // Feed endpoints
-  @GET('/posts')
-  Future<List<Map<String, dynamic>>> getPosts(
-    @Query('page') int page,
-    @Query('limit') int limit,
-  );
+  Future<List<Map<String, dynamic>>> getPosts(int page, int limit) async {
+    final response = await _dio.get(
+      '/posts',
+      queryParameters: {'page': page, 'limit': limit},
+    );
+    return (response.data as List).cast<Map<String, dynamic>>();
+  }
 
-  @POST('/posts')
-  Future<Map<String, dynamic>> createPost(@Body() Map<String, dynamic> postData);
+  Future<Map<String, dynamic>> createPost(Map<String, dynamic> postData) async {
+    final response = await _dio.post('/posts', data: postData);
+    return response.data as Map<String, dynamic>;
+  }
 
-  @GET('/posts/{id}')
-  Future<Map<String, dynamic>> getPost(@Path('id') String id);
+  Future<Map<String, dynamic>> getPost(String id) async {
+    final response = await _dio.get('/posts/$id');
+    return response.data as Map<String, dynamic>;
+  }
 
-  @PUT('/posts/{id}/like')
-  Future<void> likePost(@Path('id') String id);
+  Future<void> likePost(String id) async {
+    await _dio.put('/posts/$id/like');
+  }
 
-  @DELETE('/posts/{id}/like')
-  Future<void> unlikePost(@Path('id') String id);
+  Future<void> unlikePost(String id) async {
+    await _dio.delete('/posts/$id/like');
+  }
 }
