@@ -6,28 +6,28 @@ sealed class Failure {
 }
 
 class NetworkFailure extends Failure {
-  const NetworkFailure([String message = 'Network error occurred']) : super(message);
+  const NetworkFailure([super.message = 'Network error occurred']);
 }
 
 class ServerFailure extends Failure {
   final int? statusCode;
-  const ServerFailure(String message, this.statusCode) : super(message);
+  const ServerFailure(super.message, this.statusCode);
 }
 
 class CacheFailure extends Failure {
-  const CacheFailure([String message = 'Cache error occurred']) : super(message);
+  const CacheFailure([super.message = 'Cache error occurred']);
 }
 
 class AuthFailure extends Failure {
-  const AuthFailure([String message = 'Authentication error']) : super(message);
+  const AuthFailure([super.message = 'Authentication error']);
 }
 
 class ValidationFailure extends Failure {
-  const ValidationFailure([String message = 'Validation error']) : super(message);
+  const ValidationFailure([super.message = 'Validation error']);
 }
 
 class UnknownFailure extends Failure {
-  const UnknownFailure([String message = 'Unknown error occurred']) : super(message);
+  const UnknownFailure([super.message = 'Unknown error occurred']);
 }
 
 // Exception을 Failure로 변환하는 유틸리티

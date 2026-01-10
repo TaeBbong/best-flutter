@@ -7,26 +7,26 @@ sealed class AppException implements Exception {
 }
 
 class NetworkException extends AppException {
-  const NetworkException([String message = 'Network error occurred']) : super(message);
+  const NetworkException([super.message = 'Network error occurred']);
 }
 
 class ServerException extends AppException {
   final int? statusCode;
-  const ServerException(String message, this.statusCode) : super(message);
+  const ServerException(super.message, this.statusCode);
 }
 
 class CacheException extends AppException {
-  const CacheException([String message = 'Cache error occurred']) : super(message);
+  const CacheException([super.message = 'Cache error occurred']);
 }
 
 class AuthException extends AppException {
-  const AuthException([String message = 'Authentication error']) : super(message);
+  const AuthException([super.message = 'Authentication error']);
 }
 
 class ValidationException extends AppException {
-  const ValidationException([String message = 'Validation error']) : super(message);
+  const ValidationException([super.message = 'Validation error']);
 }
 
 class UnknownException extends AppException {
-  const UnknownException([String message = 'Unknown error occurred']) : super(message);
+  const UnknownException([super.message = 'Unknown error occurred']);
 }
