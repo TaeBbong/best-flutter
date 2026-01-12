@@ -8,12 +8,24 @@ part of 'auth_state_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Notifier that manages the authentication state.
+///
+/// Provides methods for login, register, logout, and error handling.
+/// The state is kept alive for the app's lifetime.
 
 @ProviderFor(AuthNotifier)
 final authProvider = AuthNotifierProvider._();
 
+/// Notifier that manages the authentication state.
+///
+/// Provides methods for login, register, logout, and error handling.
+/// The state is kept alive for the app's lifetime.
 final class AuthNotifierProvider
     extends $NotifierProvider<AuthNotifier, AuthState> {
+  /// Notifier that manages the authentication state.
+  ///
+  /// Provides methods for login, register, logout, and error handling.
+  /// The state is kept alive for the app's lifetime.
   AuthNotifierProvider._()
     : super(
         from: null,
@@ -42,6 +54,11 @@ final class AuthNotifierProvider
 }
 
 String _$authNotifierHash() => r'08403f74c049b44fc3851ce87a26d176920b5665';
+
+/// Notifier that manages the authentication state.
+///
+/// Provides methods for login, register, logout, and error handling.
+/// The state is kept alive for the app's lifetime.
 
 abstract class _$AuthNotifier extends $Notifier<AuthState> {
   AuthState build();

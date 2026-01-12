@@ -1,8 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/result.dart';
+import '../../di/auth_providers.dart';
 import '../../domain/entities/user.dart';
-import 'auth_providers.dart';
 
 part 'auth_state_provider.g.dart';
 

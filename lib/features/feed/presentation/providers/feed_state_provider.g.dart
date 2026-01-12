@@ -8,12 +8,24 @@ part of 'feed_state_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Async notifier for managing feed state and operations.
+///
+/// Handles loading posts, pagination, creating new posts,
+/// and toggling likes with optimistic updates.
 
 @ProviderFor(FeedNotifier)
 final feedProvider = FeedNotifierProvider._();
 
+/// Async notifier for managing feed state and operations.
+///
+/// Handles loading posts, pagination, creating new posts,
+/// and toggling likes with optimistic updates.
 final class FeedNotifierProvider
     extends $AsyncNotifierProvider<FeedNotifier, FeedState> {
+  /// Async notifier for managing feed state and operations.
+  ///
+  /// Handles loading posts, pagination, creating new posts,
+  /// and toggling likes with optimistic updates.
   FeedNotifierProvider._()
     : super(
         from: null,
@@ -34,6 +46,11 @@ final class FeedNotifierProvider
 }
 
 String _$feedNotifierHash() => r'f5c5507d6f94b0dab259333b1a21bbc6f3aa8e9a';
+
+/// Async notifier for managing feed state and operations.
+///
+/// Handles loading posts, pagination, creating new posts,
+/// and toggling likes with optimistic updates.
 
 abstract class _$FeedNotifier extends $AsyncNotifier<FeedState> {
   FutureOr<FeedState> build();

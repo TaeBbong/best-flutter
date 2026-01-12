@@ -8,13 +8,17 @@ part of 'app_router.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Provider for the [RouterNotifier] that tracks authentication state.
 
 @ProviderFor(authRouterNotifier)
 final authRouterProvider = AuthRouterNotifierProvider._();
 
+/// Provider for the [RouterNotifier] that tracks authentication state.
+
 final class AuthRouterNotifierProvider
     extends $FunctionalProvider<RouterNotifier, RouterNotifier, RouterNotifier>
     with $Provider<RouterNotifier> {
+  /// Provider for the [RouterNotifier] that tracks authentication state.
   AuthRouterNotifierProvider._()
     : super(
         from: null,
@@ -51,12 +55,32 @@ final class AuthRouterNotifierProvider
 String _$authRouterNotifierHash() =>
     r'c8bfb4accb2d45c0739df4fb6e3d16f9f0cb5ef3';
 
+/// Provider for the main [GoRouter] instance.
+///
+/// Configures the router with:
+/// - Authentication-based redirects
+/// - Route definitions for all pages
+/// - Error page handling
+
 @ProviderFor(goRouter)
 final goRouterProvider = GoRouterProvider._();
+
+/// Provider for the main [GoRouter] instance.
+///
+/// Configures the router with:
+/// - Authentication-based redirects
+/// - Route definitions for all pages
+/// - Error page handling
 
 final class GoRouterProvider
     extends $FunctionalProvider<GoRouter, GoRouter, GoRouter>
     with $Provider<GoRouter> {
+  /// Provider for the main [GoRouter] instance.
+  ///
+  /// Configures the router with:
+  /// - Authentication-based redirects
+  /// - Route definitions for all pages
+  /// - Error page handling
   GoRouterProvider._()
     : super(
         from: null,

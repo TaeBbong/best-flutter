@@ -1,18 +1,19 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../../auth/presentation/providers/auth_providers.dart';
-import '../../data/datasources/feed_remote_datasource.dart';
-import '../../data/repositories/feed_repository_impl.dart';
-import '../../domain/repositories/feed_repository.dart';
-import '../../domain/usecases/create_post_usecase.dart';
-import '../../domain/usecases/get_posts_usecase.dart';
-import '../../domain/usecases/like_post_usecase.dart';
+import '../../../core/providers/network_providers.dart';
+import '../data/datasources/feed_remote_datasource.dart';
+import '../data/repositories/feed_repository_impl.dart';
+import '../domain/repositories/feed_repository.dart';
+import '../domain/usecases/create_post_usecase.dart';
+import '../domain/usecases/get_posts_usecase.dart';
+import '../domain/usecases/like_post_usecase.dart';
 
 part 'feed_providers.g.dart';
 
+// ============ Data Layer Providers ============
+
 /// Provider for the feed remote data source.
 ///
-/// Creates a [FeedRemoteDataSourceImpl] using the API client
-/// from the auth providers.
+/// Creates a [FeedRemoteDataSourceImpl] using the API client.
 @riverpod
 FeedRemoteDataSource feedRemoteDataSource(Ref ref) {
   final apiClient = ref.watch(apiClientProvider);
@@ -27,6 +28,8 @@ FeedRepository feedRepository(Ref ref) {
   final remoteDataSource = ref.watch(feedRemoteDataSourceProvider);
   return FeedRepositoryImpl(remoteDataSource);
 }
+
+// ============ UseCase Providers ============
 
 /// Provider for the get posts use case.
 ///

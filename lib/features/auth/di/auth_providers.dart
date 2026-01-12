@@ -1,47 +1,15 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../../../core/network/api_client.dart';
-import '../../../../core/network/dio_client.dart';
-import '../../data/datasources/auth_remote_datasource.dart';
-import '../../data/repositories/auth_repository_impl.dart';
-import '../../domain/repositories/auth_repository.dart';
-import '../../domain/usecases/get_current_user_usecase.dart';
-import '../../domain/usecases/login_usecase.dart';
-import '../../domain/usecases/logout_usecase.dart';
-import '../../domain/usecases/register_usecase.dart';
+import '../../../core/providers/network_providers.dart';
+import '../../../core/providers/storage_providers.dart';
+import '../data/datasources/auth_remote_datasource.dart';
+import '../data/repositories/auth_repository_impl.dart';
+import '../domain/repositories/auth_repository.dart';
+import '../domain/usecases/get_current_user_usecase.dart';
+import '../domain/usecases/login_usecase.dart';
+import '../domain/usecases/logout_usecase.dart';
+import '../domain/usecases/register_usecase.dart';
 
 part 'auth_providers.g.dart';
-
-// ============ Infrastructure Providers ============
-
-/// Provider for [FlutterSecureStorage] instance.
-///
-/// Used for securely storing authentication tokens.
-/// Kept alive for the app's lifetime.
-@Riverpod(keepAlive: true)
-FlutterSecureStorage secureStorage(Ref ref) {
-  return const FlutterSecureStorage();
-}
-
-/// Provider for configured [DioClient] instance.
-///
-/// Sets up Dio with interceptors for authentication and logging.
-/// Kept alive for the app's lifetime.
-@Riverpod(keepAlive: true)
-DioClient dioClient(Ref ref) {
-  final secureStorage = ref.watch(secureStorageProvider);
-  return DioClient(secureStorage);
-}
-
-/// Provider for [ApiClient] instance.
-///
-/// Provides typed methods for all API endpoints.
-/// Kept alive for the app's lifetime.
-@Riverpod(keepAlive: true)
-ApiClient apiClient(Ref ref) {
-  final dioClient = ref.watch(dioClientProvider);
-  return ApiClient(dioClient.dio);
-}
 
 // ============ Data Layer Providers ============
 

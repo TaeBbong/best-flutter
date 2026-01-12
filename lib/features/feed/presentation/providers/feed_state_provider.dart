@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/error/result.dart';
+import '../../di/feed_providers.dart';
 import '../../domain/entities/post.dart';
-import 'feed_providers.dart';
 
 part 'feed_state_provider.g.dart';
 
