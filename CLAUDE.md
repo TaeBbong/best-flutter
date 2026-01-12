@@ -85,6 +85,9 @@ lib/
 │   ├── network/
 │   │   ├── api_client.dart               # Dio 기반 API 메서드
 │   │   └── dio_client.dart               # Dio 인스턴스 + 인터셉터
+│   ├── providers/                        # 공유 인프라 DI (전역)
+│   │   ├── network_providers.dart        # dioClientProvider, apiClientProvider
+│   │   └── storage_providers.dart        # secureStorageProvider
 │   ├── router/app_router.dart            # GoRouter 설정 + 인증 기반 리다이렉트
 │   ├── theme/
 │   │   ├── app_colors.dart
@@ -100,9 +103,11 @@ lib/
 │   │   │   ├── datasources/auth_remote_datasource.dart
 │   │   │   ├── models/user_model.dart
 │   │   │   └── repositories/auth_repository_impl.dart
+│   │   ├── di/                           # Feature 전용 DI
+│   │   │   └── auth_providers.dart       # dataSource, repository, usecase providers
 │   │   ├── domain/
 │   │   │   ├── entities/user.dart
-│   │   │   ├── repositories/auth_repository.dart
+│   │   │   ├── repositories/auth_repository.dart  # 추상체 (의존성 역전)
 │   │   │   └── usecases/
 │   │   │       ├── login_usecase.dart
 │   │   │       ├── register_usecase.dart
@@ -111,8 +116,7 @@ lib/
 │   │   └── presentation/
 │   │       ├── pages/login_page.dart
 │   │       ├── providers/
-│   │       │   ├── auth_providers.dart      # DI providers
-│   │       │   └── auth_state_provider.dart # AuthNotifier
+│   │       │   └── auth_state_provider.dart # AuthNotifier (상태 관리만)
 │   │       └── widgets/
 │   │
 │   └── feed/
@@ -120,9 +124,11 @@ lib/
 │       │   ├── datasources/feed_remote_datasource.dart
 │       │   ├── models/post_model.dart
 │       │   └── repositories/feed_repository_impl.dart
+│       ├── di/                           # Feature 전용 DI
+│       │   └── feed_providers.dart       # dataSource, repository, usecase providers
 │       ├── domain/
 │       │   ├── entities/post.dart
-│       │   ├── repositories/feed_repository.dart
+│       │   ├── repositories/feed_repository.dart  # 추상체 (의존성 역전)
 │       │   └── usecases/
 │       │       ├── get_posts_usecase.dart
 │       │       ├── create_post_usecase.dart
@@ -132,8 +138,7 @@ lib/
 │           │   ├── feed_page.dart
 │           │   └── create_post_page.dart
 │           ├── providers/
-│           │   ├── feed_providers.dart
-│           │   └── feed_state_provider.dart
+│           │   └── feed_state_provider.dart # FeedNotifier (상태 관리만)
 │           └── widgets/post_card.dart
 │
 └── main.dart
@@ -141,12 +146,32 @@ lib/
 
 ## 주요 Provider 참조
 
-| 클래스/함수 | Provider 이름 | 용도 |
-|------------|--------------|------|
+### 공유 인프라 (core/providers/)
+| 함수 | Provider 이름 | 용도 |
+|------|--------------|------|
+| `secureStorage` | `secureStorageProvider` | FlutterSecureStorage 인스턴스 |
+| `dioClient` | `dioClientProvider` | Dio 클라이언트 (인터셉터 포함) |
+| `apiClient` | `apiClientProvider` | API 호출 클라이언트 |
+
+### Feature DI (features/*/di/)
+| 함수 | Provider 이름 | 용도 |
+|------|--------------|------|
+| `authRepository` | `authRepositoryProvider` | AuthRepository 구현체 |
+| `loginUseCase` | `loginUseCaseProvider` | 로그인 UseCase |
+| `feedRepository` | `feedRepositoryProvider` | FeedRepository 구현체 |
+| `getPostsUseCase` | `getPostsUseCaseProvider` | 피드 조회 UseCase |
+
+### 상태 관리 (features/*/presentation/providers/)
+| 클래스 | Provider 이름 | 용도 |
+|--------|--------------|------|
 | `AuthNotifier` | `authProvider` | 인증 상태 관리 |
 | `FeedNotifier` | `feedProvider` | 피드 상태 관리 |
+
+### 라우터 (core/router/)
+| 클래스/함수 | Provider 이름 | 용도 |
+|------------|--------------|------|
 | `goRouter` 함수 | `goRouterProvider` | GoRouter 인스턴스 |
-| `AuthRouterNotifier` | `authRouterNotifierProvider` | 라우터 인증 상태 감지 |
+| `RouterNotifier` | `authRouterNotifierProvider` | 라우터 인증 상태 감지 |
 
 ## 빌드 명령어
 
@@ -166,8 +191,16 @@ fvm flutter analyze
 fvm flutter run
 ```
 
-## 최근 수정 이력 (2026-01-10)
+## 최근 수정 이력
 
+### 2026-01-12
+1. **di**: Clean Architecture 준수를 위한 DI 구조 리팩토링
+   - 공유 인프라 provider를 `core/providers/`로 이동 (DioClient, ApiClient, SecureStorage)
+   - Feature별 DI를 `features/*/di/`로 분리 (DataSource, Repository, UseCase)
+   - presentation layer에서 data layer 직접 import 제거 (계층 위반 해소)
+   - presentation/providers/에는 상태 관리 Notifier만 유지
+
+### 2026-01-10
 1. **error**: Exception/Failure 클래스에 super parameters 적용
 2. **network**: Retrofit 제거, Dio 직접 사용으로 변경
 3. **theme**: Color hex 형식 수정, deprecated API 교체 (CardTheme, withOpacity)

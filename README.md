@@ -65,6 +65,9 @@ lib/
 │   ├── network/                   # 네트워크 계층
 │   │   ├── api_client.dart        # Dio 기반 API 클라이언트
 │   │   └── dio_client.dart        # Dio 설정 & 인터셉터
+│   ├── providers/                 # 공유 인프라 DI (전역)
+│   │   ├── network_providers.dart # dioClient, apiClient providers
+│   │   └── storage_providers.dart # secureStorage provider
 │   ├── router/                    # 라우팅
 │   │   └── app_router.dart        # GoRouter 설정
 │   ├── theme/                     # 앱 테마
@@ -81,17 +84,20 @@ lib/
 │   │   │   ├── datasources/
 │   │   │   ├── models/
 │   │   │   └── repositories/
+│   │   ├── di/                    # Feature 전용 DI
+│   │   │   └── auth_providers.dart
 │   │   ├── domain/                # 도메인 계층
 │   │   │   ├── entities/
-│   │   │   ├── repositories/
+│   │   │   ├── repositories/      # 추상체 (의존성 역전)
 │   │   │   └── usecases/
 │   │   └── presentation/          # 프레젠테이션 계층
 │   │       ├── pages/
-│   │       ├── providers/
+│   │       ├── providers/         # 상태 관리 Notifier만
 │   │       └── widgets/
 │   │
 │   └── feed/                      # 피드 기능
 │       ├── data/
+│       ├── di/                    # Feature 전용 DI
 │       ├── domain/
 │       └── presentation/
 │
@@ -310,11 +316,14 @@ auth/
 │   └── repositories/
 │       └── auth_repository_impl.dart      # Repository 구현
 │
+├── di/                                    # Feature 전용 DI
+│   └── auth_providers.dart                # dataSource, repository, usecase providers
+│
 ├── domain/
 │   ├── entities/
 │   │   └── user.dart                      # 비즈니스 모델
 │   ├── repositories/
-│   │   └── auth_repository.dart           # Repository 인터페이스
+│   │   └── auth_repository.dart           # Repository 인터페이스 (추상체)
 │   └── usecases/
 │       ├── login_usecase.dart
 │       ├── register_usecase.dart
@@ -324,8 +333,7 @@ auth/
     ├── pages/
     │   └── login_page.dart                # 로그인 UI
     ├── providers/
-    │   ├── auth_providers.dart            # 의존성 Provider
-    │   └── auth_state_provider.dart       # 상태 Notifier
+    │   └── auth_state_provider.dart       # 상태 Notifier만
     └── widgets/
 ```
 
@@ -374,36 +382,52 @@ abstract class UserModel with _$UserModel {
 
 ### Riverpod Provider 구조
 
-```dart
-// presentation/providers/auth_providers.dart
+DI는 계층별로 분리되어 있습니다:
 
-// 1. 인프라 Provider (keepAlive: 앱 수명 동안 유지)
+```dart
+// core/providers/storage_providers.dart - 공유 인프라 (전역)
 @Riverpod(keepAlive: true)
-FlutterSecureStorage secureStorage(SecureStorageRef ref) {
+FlutterSecureStorage secureStorage(Ref ref) {
   return const FlutterSecureStorage();
 }
 
-// 2. DataSource Provider
+// core/providers/network_providers.dart - 공유 인프라 (전역)
 @Riverpod(keepAlive: true)
-AuthRemoteDataSource authRemoteDataSource(AuthRemoteDataSourceRef ref) {
+DioClient dioClient(Ref ref) {
+  return DioClient(ref.watch(secureStorageProvider));
+}
+
+@Riverpod(keepAlive: true)
+ApiClient apiClient(Ref ref) {
+  return ApiClient(ref.watch(dioClientProvider).dio);
+}
+```
+
+```dart
+// features/auth/di/auth_providers.dart - Feature 전용 DI
+@Riverpod(keepAlive: true)
+AuthRemoteDataSource authRemoteDataSource(Ref ref) {
   return AuthRemoteDataSourceImpl(
     ref.watch(apiClientProvider),
     ref.watch(secureStorageProvider),
   );
 }
 
-// 3. Repository Provider
 @Riverpod(keepAlive: true)
-AuthRepository authRepository(AuthRepositoryRef ref) {
+AuthRepository authRepository(Ref ref) {  // domain 추상체 반환
   return AuthRepositoryImpl(ref.watch(authRemoteDataSourceProvider));
 }
 
-// 4. UseCase Provider
 @riverpod
-LoginUseCase loginUseCase(LoginUseCaseRef ref) {
+LoginUseCase loginUseCase(Ref ref) {
   return LoginUseCase(ref.watch(authRepositoryProvider));
 }
 ```
+
+**DI 구조 설계 원칙**:
+- **core/providers/**: 전역 공유 인프라 (Dio, SecureStorage 등)
+- **features/*/di/**: Feature별 DataSource, Repository, UseCase
+- **features/*/presentation/providers/**: 상태 관리 Notifier만
 
 ### State Provider 패턴
 
@@ -713,13 +737,14 @@ class ApiClient {
 #### Step 4: Presentation 계층
 
 ```dart
-// 1. Provider 추가
+// 1. DI Provider 추가 (features/feed/di/feed_providers.dart)
 @riverpod
-GetCommentsUseCase getCommentsUseCase(GetCommentsUseCaseRef ref) {
+GetCommentsUseCase getCommentsUseCase(Ref ref) {
   return GetCommentsUseCase(ref.watch(feedRepositoryProvider));
 }
 
-// 2. State Provider 생성 (Family 패턴 - postId별로 다른 상태)
+// 2. State Provider 생성 (features/feed/presentation/providers/)
+// Family 패턴 - postId별로 다른 상태
 @riverpod
 class CommentNotifier extends _$CommentNotifier {
   @override
@@ -765,7 +790,7 @@ dart run build_runner build --delete-conflicting-outputs
 - [ ] **Data**: DataSource에 메서드 추가
 - [ ] **Data**: Repository 구현체 업데이트
 - [ ] **Core**: API Client에 엔드포인트 추가
-- [ ] **Presentation**: Provider 추가
+- [ ] **DI**: `features/*/di/`에 UseCase Provider 추가
 - [ ] **Presentation**: State/Notifier 생성 (필요시)
 - [ ] **Presentation**: UI 생성
 - [ ] `build_runner` 실행
