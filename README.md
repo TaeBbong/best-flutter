@@ -49,6 +49,29 @@ dart run build_runner watch --delete-conflicting-outputs
 flutter run
 ```
 
+### 테스트 API: DummyJSON
+
+이 프로젝트는 [DummyJSON](https://dummyjson.com)을 백엔드 API로 사용합니다.
+
+**테스트 계정**:
+- Username: `emilys`
+- Password: `emilyspass`
+- 더 많은 테스트 사용자: https://dummyjson.com/users
+
+**주요 엔드포인트**:
+| 기능 | 메서드 | 엔드포인트 |
+|------|--------|-----------|
+| 로그인 | POST | `/auth/login` (username, password) |
+| 현재 사용자 | GET | `/auth/me` |
+| 게시물 목록 | GET | `/posts?skip=0&limit=20` |
+| 게시물 생성 | POST | `/posts/add` |
+| 게시물 수정 | PATCH | `/posts/{id}` |
+
+**주의사항**:
+- DummyJSON은 데이터를 실제로 저장하지 않음 (시뮬레이션)
+- 회원가입 API 미지원 → 기본 테스트 사용자로 로그인 처리
+- email 대신 username으로 로그인
+
 ---
 
 ## 프로젝트 구조
@@ -188,15 +211,30 @@ Flutter에서 에러 처리는 까다롭습니다. try-catch를 남발하면 코
 // core/error/result.dart
 sealed class Result<T> {
   const Result();
+}
 
+class Success<T> extends Result<T> {
+  final T data;
+  const Success(this.data);
+}
+
+class Error<T> extends Result<T> {
+  final Failure failure;
+  const Error(this.failure);
+}
+
+// fold 메서드는 extension으로 제공
+extension ResultExtension<T> on Result<T> {
   R fold<R>({
     required R Function(T data) onSuccess,
     required R Function(Failure failure) onError,
-  });
+  }) {
+    return switch (this) {
+      Success(data: final data) => onSuccess(data),
+      Error(failure: final failure) => onError(failure),
+    };
+  }
 }
-
-class Success<T> extends Result<T> { ... }
-class Error<T> extends Result<T> { ... }
 ```
 
 #### 사용 예시
@@ -206,14 +244,14 @@ class Error<T> extends Result<T> { ... }
 Future<Result<User>> login() async {
   try {
     final user = await dataSource.login();
-    return Result.success(user);
+    return Success(user);  // Success 생성자 직접 사용
   } on ServerException catch (e) {
-    return Result.error(ServerFailure(e.message));
+    return Error(ServerFailure(e.message));  // Error 생성자 직접 사용
   }
 }
 
 // Notifier에서 Result 처리
-final result = await loginUseCase(email: email, password: password);
+final result = await loginUseCase(username: username, password: password);
 
 result.fold(
   onSuccess: (user) {
@@ -348,29 +386,32 @@ abstract class User with _$User {
     required String id,
     required String email,
     required String username,
+    String? displayName,        // firstName + lastName 조합
     String? profileImageUrl,
   }) = _User;
 }
 
-// data/models/user_model.dart - API 응답 모델
+// data/models/user_model.dart - API 응답 모델 (DummyJSON 형식)
 @freezed
 abstract class UserModel with _$UserModel {
   const UserModel._();  // 커스텀 메서드 사용을 위한 private 생성자
 
   const factory UserModel({
-    required String id,
-    required String email,
+    required int id,            // DummyJSON은 int ID 사용
     required String username,
-    @JsonKey(name: 'profile_image_url')  // API 필드명 매핑
-    String? profileImageUrl,
+    required String email,
+    required String firstName,
+    required String lastName,
+    String? image,              // 프로필 이미지 URL
   }) = _UserModel;
 
   // Model → Entity 변환
   User toEntity() => User(
-    id: id,
+    id: id.toString(),
     email: email,
     username: username,
-    profileImageUrl: profileImageUrl,
+    displayName: '$firstName $lastName',
+    profileImageUrl: image,
   );
 }
 ```
@@ -449,13 +490,13 @@ class AuthNotifier extends _$AuthNotifier {
   @override
   AuthState build() => const AuthState();  // 초기 상태
 
-  Future<void> login({required String email, required String password}) async {
+  Future<void> login({required String username, required String password}) async {
     // 1. 로딩 시작
     state = state.copyWith(isLoading: true, clearError: true);
 
     // 2. UseCase 실행
     final loginUseCase = ref.read(loginUseCaseProvider);
-    final result = await loginUseCase(email: email, password: password);
+    final result = await loginUseCase(username: username, password: password);
 
     // 3. 결과에 따라 상태 업데이트
     result.fold(
@@ -708,27 +749,31 @@ abstract class CommentModel with _$CommentModel {
 ```dart
 // core/network/api_client.dart
 // Dio 직접 사용 방식으로 API 메서드 추가
+// Note: DummyJSON은 skip/limit 기반 페이지네이션 사용
 class ApiClient {
   final Dio _dio;
   ApiClient(this._dio);
 
-  Future<List<Map<String, dynamic>>> getComments(
-    String postId, {
-    required int page,
+  Future<Map<String, dynamic>> getComments(
+    int postId, {
+    required int skip,   // page 대신 skip 사용
     required int limit,
   }) async {
     final response = await _dio.get(
       '/posts/$postId/comments',
-      queryParameters: {'page': page, 'limit': limit},
+      queryParameters: {'skip': skip, 'limit': limit},
     );
-    return (response.data as List).cast<Map<String, dynamic>>();
+    return response.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> createComment(
-    String postId,
+    int postId,
     Map<String, dynamic> body,
   ) async {
-    final response = await _dio.post('/posts/$postId/comments', data: body);
+    final response = await _dio.post('/comments/add', data: {
+      ...body,
+      'postId': postId,
+    });
     return response.data as Map<String, dynamic>;
   }
 }

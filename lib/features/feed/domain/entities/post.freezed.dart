@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Post {
 
- String get id; String get authorId; String get authorUsername; String? get authorProfileImageUrl; String get content; List<String>? get imageUrls; int get likesCount; int get commentsCount; bool get isLiked; DateTime get createdAt;
+ int get id; String get title; String get body; int get userId; List<String> get tags; int get likes; int get dislikes; int get views;
 /// Create a copy of Post
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $PostCopyWith<Post> get copyWith => _$PostCopyWithImpl<Post>(this as Post, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Post&&(identical(other.id, id) || other.id == id)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.authorUsername, authorUsername) || other.authorUsername == authorUsername)&&(identical(other.authorProfileImageUrl, authorProfileImageUrl) || other.authorProfileImageUrl == authorProfileImageUrl)&&(identical(other.content, content) || other.content == content)&&const DeepCollectionEquality().equals(other.imageUrls, imageUrls)&&(identical(other.likesCount, likesCount) || other.likesCount == likesCount)&&(identical(other.commentsCount, commentsCount) || other.commentsCount == commentsCount)&&(identical(other.isLiked, isLiked) || other.isLiked == isLiked)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Post&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.userId, userId) || other.userId == userId)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.likes, likes) || other.likes == likes)&&(identical(other.dislikes, dislikes) || other.dislikes == dislikes)&&(identical(other.views, views) || other.views == views));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,authorId,authorUsername,authorProfileImageUrl,content,const DeepCollectionEquality().hash(imageUrls),likesCount,commentsCount,isLiked,createdAt);
+int get hashCode => Object.hash(runtimeType,id,title,body,userId,const DeepCollectionEquality().hash(tags),likes,dislikes,views);
 
 @override
 String toString() {
-  return 'Post(id: $id, authorId: $authorId, authorUsername: $authorUsername, authorProfileImageUrl: $authorProfileImageUrl, content: $content, imageUrls: $imageUrls, likesCount: $likesCount, commentsCount: $commentsCount, isLiked: $isLiked, createdAt: $createdAt)';
+  return 'Post(id: $id, title: $title, body: $body, userId: $userId, tags: $tags, likes: $likes, dislikes: $dislikes, views: $views)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $PostCopyWith<$Res>  {
   factory $PostCopyWith(Post value, $Res Function(Post) _then) = _$PostCopyWithImpl;
 @useResult
 $Res call({
- String id, String authorId, String authorUsername, String? authorProfileImageUrl, String content, List<String>? imageUrls, int likesCount, int commentsCount, bool isLiked, DateTime createdAt
+ int id, String title, String body, int userId, List<String> tags, int likes, int dislikes, int views
 });
 
 
@@ -65,19 +65,17 @@ class _$PostCopyWithImpl<$Res>
 
 /// Create a copy of Post
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? authorId = null,Object? authorUsername = null,Object? authorProfileImageUrl = freezed,Object? content = null,Object? imageUrls = freezed,Object? likesCount = null,Object? commentsCount = null,Object? isLiked = null,Object? createdAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? body = null,Object? userId = null,Object? tags = null,Object? likes = null,Object? dislikes = null,Object? views = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,authorId: null == authorId ? _self.authorId : authorId // ignore: cast_nullable_to_non_nullable
-as String,authorUsername: null == authorUsername ? _self.authorUsername : authorUsername // ignore: cast_nullable_to_non_nullable
-as String,authorProfileImageUrl: freezed == authorProfileImageUrl ? _self.authorProfileImageUrl : authorProfileImageUrl // ignore: cast_nullable_to_non_nullable
-as String?,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
-as String,imageUrls: freezed == imageUrls ? _self.imageUrls : imageUrls // ignore: cast_nullable_to_non_nullable
-as List<String>?,likesCount: null == likesCount ? _self.likesCount : likesCount // ignore: cast_nullable_to_non_nullable
-as int,commentsCount: null == commentsCount ? _self.commentsCount : commentsCount // ignore: cast_nullable_to_non_nullable
-as int,isLiked: null == isLiked ? _self.isLiked : isLiked // ignore: cast_nullable_to_non_nullable
-as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,body: null == body ? _self.body : body // ignore: cast_nullable_to_non_nullable
+as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as int,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
+as List<String>,likes: null == likes ? _self.likes : likes // ignore: cast_nullable_to_non_nullable
+as int,dislikes: null == dislikes ? _self.dislikes : dislikes // ignore: cast_nullable_to_non_nullable
+as int,views: null == views ? _self.views : views // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
@@ -162,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String authorId,  String authorUsername,  String? authorProfileImageUrl,  String content,  List<String>? imageUrls,  int likesCount,  int commentsCount,  bool isLiked,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  String body,  int userId,  List<String> tags,  int likes,  int dislikes,  int views)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Post() when $default != null:
-return $default(_that.id,_that.authorId,_that.authorUsername,_that.authorProfileImageUrl,_that.content,_that.imageUrls,_that.likesCount,_that.commentsCount,_that.isLiked,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.body,_that.userId,_that.tags,_that.likes,_that.dislikes,_that.views);case _:
   return orElse();
 
 }
@@ -183,10 +181,10 @@ return $default(_that.id,_that.authorId,_that.authorUsername,_that.authorProfile
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String authorId,  String authorUsername,  String? authorProfileImageUrl,  String content,  List<String>? imageUrls,  int likesCount,  int commentsCount,  bool isLiked,  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  String body,  int userId,  List<String> tags,  int likes,  int dislikes,  int views)  $default,) {final _that = this;
 switch (_that) {
 case _Post():
-return $default(_that.id,_that.authorId,_that.authorUsername,_that.authorProfileImageUrl,_that.content,_that.imageUrls,_that.likesCount,_that.commentsCount,_that.isLiked,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.body,_that.userId,_that.tags,_that.likes,_that.dislikes,_that.views);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -203,10 +201,10 @@ return $default(_that.id,_that.authorId,_that.authorUsername,_that.authorProfile
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String authorId,  String authorUsername,  String? authorProfileImageUrl,  String content,  List<String>? imageUrls,  int likesCount,  int commentsCount,  bool isLiked,  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  String body,  int userId,  List<String> tags,  int likes,  int dislikes,  int views)?  $default,) {final _that = this;
 switch (_that) {
 case _Post() when $default != null:
-return $default(_that.id,_that.authorId,_that.authorUsername,_that.authorProfileImageUrl,_that.content,_that.imageUrls,_that.likesCount,_that.commentsCount,_that.isLiked,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.body,_that.userId,_that.tags,_that.likes,_that.dislikes,_that.views);case _:
   return null;
 
 }
@@ -218,27 +216,23 @@ return $default(_that.id,_that.authorId,_that.authorUsername,_that.authorProfile
 @JsonSerializable()
 
 class _Post implements Post {
-  const _Post({required this.id, required this.authorId, required this.authorUsername, this.authorProfileImageUrl, required this.content, final  List<String>? imageUrls, required this.likesCount, required this.commentsCount, required this.isLiked, required this.createdAt}): _imageUrls = imageUrls;
+  const _Post({required this.id, required this.title, required this.body, required this.userId, final  List<String> tags = const [], this.likes = 0, this.dislikes = 0, this.views = 0}): _tags = tags;
   factory _Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 
-@override final  String id;
-@override final  String authorId;
-@override final  String authorUsername;
-@override final  String? authorProfileImageUrl;
-@override final  String content;
- final  List<String>? _imageUrls;
-@override List<String>? get imageUrls {
-  final value = _imageUrls;
-  if (value == null) return null;
-  if (_imageUrls is EqualUnmodifiableListView) return _imageUrls;
+@override final  int id;
+@override final  String title;
+@override final  String body;
+@override final  int userId;
+ final  List<String> _tags;
+@override@JsonKey() List<String> get tags {
+  if (_tags is EqualUnmodifiableListView) return _tags;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(value);
+  return EqualUnmodifiableListView(_tags);
 }
 
-@override final  int likesCount;
-@override final  int commentsCount;
-@override final  bool isLiked;
-@override final  DateTime createdAt;
+@override@JsonKey() final  int likes;
+@override@JsonKey() final  int dislikes;
+@override@JsonKey() final  int views;
 
 /// Create a copy of Post
 /// with the given fields replaced by the non-null parameter values.
@@ -253,16 +247,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Post&&(identical(other.id, id) || other.id == id)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.authorUsername, authorUsername) || other.authorUsername == authorUsername)&&(identical(other.authorProfileImageUrl, authorProfileImageUrl) || other.authorProfileImageUrl == authorProfileImageUrl)&&(identical(other.content, content) || other.content == content)&&const DeepCollectionEquality().equals(other._imageUrls, _imageUrls)&&(identical(other.likesCount, likesCount) || other.likesCount == likesCount)&&(identical(other.commentsCount, commentsCount) || other.commentsCount == commentsCount)&&(identical(other.isLiked, isLiked) || other.isLiked == isLiked)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Post&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.userId, userId) || other.userId == userId)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.likes, likes) || other.likes == likes)&&(identical(other.dislikes, dislikes) || other.dislikes == dislikes)&&(identical(other.views, views) || other.views == views));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,authorId,authorUsername,authorProfileImageUrl,content,const DeepCollectionEquality().hash(_imageUrls),likesCount,commentsCount,isLiked,createdAt);
+int get hashCode => Object.hash(runtimeType,id,title,body,userId,const DeepCollectionEquality().hash(_tags),likes,dislikes,views);
 
 @override
 String toString() {
-  return 'Post(id: $id, authorId: $authorId, authorUsername: $authorUsername, authorProfileImageUrl: $authorProfileImageUrl, content: $content, imageUrls: $imageUrls, likesCount: $likesCount, commentsCount: $commentsCount, isLiked: $isLiked, createdAt: $createdAt)';
+  return 'Post(id: $id, title: $title, body: $body, userId: $userId, tags: $tags, likes: $likes, dislikes: $dislikes, views: $views)';
 }
 
 
@@ -273,7 +267,7 @@ abstract mixin class _$PostCopyWith<$Res> implements $PostCopyWith<$Res> {
   factory _$PostCopyWith(_Post value, $Res Function(_Post) _then) = __$PostCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String authorId, String authorUsername, String? authorProfileImageUrl, String content, List<String>? imageUrls, int likesCount, int commentsCount, bool isLiked, DateTime createdAt
+ int id, String title, String body, int userId, List<String> tags, int likes, int dislikes, int views
 });
 
 
@@ -290,19 +284,17 @@ class __$PostCopyWithImpl<$Res>
 
 /// Create a copy of Post
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? authorId = null,Object? authorUsername = null,Object? authorProfileImageUrl = freezed,Object? content = null,Object? imageUrls = freezed,Object? likesCount = null,Object? commentsCount = null,Object? isLiked = null,Object? createdAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? body = null,Object? userId = null,Object? tags = null,Object? likes = null,Object? dislikes = null,Object? views = null,}) {
   return _then(_Post(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,authorId: null == authorId ? _self.authorId : authorId // ignore: cast_nullable_to_non_nullable
-as String,authorUsername: null == authorUsername ? _self.authorUsername : authorUsername // ignore: cast_nullable_to_non_nullable
-as String,authorProfileImageUrl: freezed == authorProfileImageUrl ? _self.authorProfileImageUrl : authorProfileImageUrl // ignore: cast_nullable_to_non_nullable
-as String?,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
-as String,imageUrls: freezed == imageUrls ? _self._imageUrls : imageUrls // ignore: cast_nullable_to_non_nullable
-as List<String>?,likesCount: null == likesCount ? _self.likesCount : likesCount // ignore: cast_nullable_to_non_nullable
-as int,commentsCount: null == commentsCount ? _self.commentsCount : commentsCount // ignore: cast_nullable_to_non_nullable
-as int,isLiked: null == isLiked ? _self.isLiked : isLiked // ignore: cast_nullable_to_non_nullable
-as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,body: null == body ? _self.body : body // ignore: cast_nullable_to_non_nullable
+as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as int,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
+as List<String>,likes: null == likes ? _self.likes : likes // ignore: cast_nullable_to_non_nullable
+as int,dislikes: null == dislikes ? _self.dislikes : dislikes // ignore: cast_nullable_to_non_nullable
+as int,views: null == views ? _self.views : views // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

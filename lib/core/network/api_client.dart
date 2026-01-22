@@ -22,19 +22,19 @@ class ApiClient {
 
   /// Authenticates a user with their credentials.
   ///
-  /// [loginData] should contain 'email' and 'password' fields.
+  /// DummyJSON uses 'username' and 'password' fields for login.
   /// Returns user data and authentication tokens on success.
   Future<Map<String, dynamic>> login(Map<String, dynamic> loginData) async {
     final response = await _dio.post('/auth/login', data: loginData);
     return response.data as Map<String, dynamic>;
   }
 
-  /// Registers a new user account.
+  /// Retrieves the currently authenticated user's data.
   ///
-  /// [registerData] should contain 'email', 'password', and 'username' fields.
-  /// Returns the newly created user data on success.
-  Future<Map<String, dynamic>> register(Map<String, dynamic> registerData) async {
-    final response = await _dio.post('/auth/register', data: registerData);
+  /// Requires a valid access token in the Authorization header.
+  /// Returns user data on success.
+  Future<Map<String, dynamic>> getCurrentUser() async {
+    final response = await _dio.get('/auth/me');
     return response.data as Map<String, dynamic>;
   }
 
@@ -47,50 +47,60 @@ class ApiClient {
     return response.data as Map<String, dynamic>;
   }
 
+  /// Retrieves a user by their ID.
+  ///
+  /// [id] is the unique identifier of the user.
+  /// Returns user data on success.
+  Future<Map<String, dynamic>> getUser(int id) async {
+    final response = await _dio.get('/users/$id');
+    return response.data as Map<String, dynamic>;
+  }
+
   // ============ Feed Endpoints ============
 
   /// Retrieves a paginated list of posts.
   ///
-  /// [page] is the page number to retrieve (1-indexed).
+  /// DummyJSON uses 'limit' and 'skip' for pagination.
+  /// [skip] is the number of posts to skip.
   /// [limit] is the number of posts per page.
-  /// Returns a list of post data maps.
-  Future<List<Map<String, dynamic>>> getPosts(int page, int limit) async {
+  /// Returns response containing 'posts' array and pagination info.
+  Future<Map<String, dynamic>> getPosts({
+    required int skip,
+    required int limit,
+  }) async {
     final response = await _dio.get(
       '/posts',
-      queryParameters: {'page': page, 'limit': limit},
+      queryParameters: {'skip': skip, 'limit': limit},
     );
-    return (response.data as List).cast<Map<String, dynamic>>();
+    return response.data as Map<String, dynamic>;
   }
 
   /// Creates a new post.
   ///
-  /// [postData] should contain 'content' and optionally 'imageUrls' fields.
+  /// DummyJSON requires 'title' and 'userId' fields.
   /// Returns the created post data on success.
   Future<Map<String, dynamic>> createPost(Map<String, dynamic> postData) async {
-    final response = await _dio.post('/posts', data: postData);
+    final response = await _dio.post('/posts/add', data: postData);
     return response.data as Map<String, dynamic>;
   }
 
   /// Retrieves a single post by its ID.
   ///
   /// [id] is the unique identifier of the post.
-  /// Returns the post data including author information.
-  Future<Map<String, dynamic>> getPost(String id) async {
+  /// Returns the post data.
+  Future<Map<String, dynamic>> getPost(int id) async {
     final response = await _dio.get('/posts/$id');
     return response.data as Map<String, dynamic>;
   }
 
-  /// Adds a like to a post.
+  /// Updates a post (simulates like by updating reactions).
   ///
-  /// [id] is the unique identifier of the post to like.
-  Future<void> likePost(String id) async {
-    await _dio.put('/posts/$id/like');
-  }
-
-  /// Removes a like from a post.
-  ///
-  /// [id] is the unique identifier of the post to unlike.
-  Future<void> unlikePost(String id) async {
-    await _dio.delete('/posts/$id/like');
+  /// DummyJSON doesn't have a dedicated like endpoint,
+  /// so we use PATCH to update the post.
+  /// [id] is the unique identifier of the post.
+  /// [data] contains the fields to update.
+  Future<Map<String, dynamic>> updatePost(int id, Map<String, dynamic> data) async {
+    final response = await _dio.patch('/posts/$id', data: data);
+    return response.data as Map<String, dynamic>;
   }
 }

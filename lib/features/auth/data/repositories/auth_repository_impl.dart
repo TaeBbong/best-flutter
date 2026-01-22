@@ -19,12 +19,12 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Result<User>> login({
-    required String email,
+    required String username,
     required String password,
   }) async {
     try {
       final userModel = await _remoteDataSource.login(
-        email: email,
+        username: username,
         password: password,
       );
       final user = userModel.toEntity();
@@ -44,10 +44,13 @@ class AuthRepositoryImpl implements AuthRepository {
     required String username,
   }) async {
     try {
-      final userModel = await _remoteDataSource.register(
-        email: email,
-        password: password,
-        username: username,
+      // DummyJSON doesn't support actual registration.
+      // For frontend practice, we simulate registration by logging in
+      // with a default test user from DummyJSON.
+      // Available test users: https://dummyjson.com/users
+      final userModel = await _remoteDataSource.login(
+        username: 'emilys',  // Default test user
+        password: 'emilyspass',
       );
       final user = userModel.toEntity();
       _userController.add(user);
@@ -77,28 +80,6 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final userModel = await _remoteDataSource.getCurrentUser();
       final user = userModel.toEntity();
-      return Success(user);
-    } on AppException catch (e) {
-      return Error(mapExceptionToFailure(e));
-    } catch (e) {
-      return const Error(UnknownFailure('An unknown error occurred'));
-    }
-  }
-
-  @override
-  Future<Result<User>> updateProfile({
-    String? username,
-    String? bio,
-    String? profileImageUrl,
-  }) async {
-    try {
-      final userModel = await _remoteDataSource.updateProfile(
-        username: username,
-        bio: bio,
-        profileImageUrl: profileImageUrl,
-      );
-      final user = userModel.toEntity();
-      _userController.add(user);
       return Success(user);
     } on AppException catch (e) {
       return Error(mapExceptionToFailure(e));

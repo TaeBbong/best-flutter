@@ -13,18 +13,22 @@ class CreatePostUseCase {
 
   /// Executes the create post operation.
   ///
-  /// - [content]: Text content of the post.
-  /// - [imageUrls]: Optional list of image URLs to attach.
+  /// DummyJSON requires title, body, and userId for post creation.
+  /// - [title]: Title of the post.
+  /// - [body]: Body content of the post.
+  /// - [userId]: ID of the user creating the post.
   ///
   /// Returns a [Result] containing the created [Post] on success,
   /// or a failure with error details.
   Future<Result<Post>> call({
-    required String content,
-    List<String>? imageUrls,
+    required String title,
+    required String body,
+    required int userId,
   }) {
     return _repository.createPost(
-      content: content,
-      imageUrls: imageUrls,
+      title: title,
+      body: body,
+      userId: userId,
     );
   }
 }

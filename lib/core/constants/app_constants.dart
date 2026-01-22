@@ -6,7 +6,8 @@ class AppConstants {
   // ============ API Configuration ============
 
   /// Base URL for all API requests.
-  static const String apiBaseUrl = 'https://api.example.com/v1';
+  /// Using DummyJSON for testing: https://dummyjson.com
+  static const String apiBaseUrl = 'https://dummyjson.com';
 
   // ============ Storage Keys ============
 

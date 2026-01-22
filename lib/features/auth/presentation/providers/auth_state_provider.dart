@@ -62,13 +62,13 @@ class AuthNotifier extends _$AuthNotifier {
   /// On success, updates [AuthState.user] with the authenticated user.
   /// On failure, updates [AuthState.error] with the failure details.
   Future<void> login({
-    required String email,
+    required String username,
     required String password,
   }) async {
     state = state.copyWith(isLoading: true, clearError: true);
 
     final loginUseCase = ref.read(loginUseCaseProvider);
-    final result = await loginUseCase(email: email, password: password);
+    final result = await loginUseCase(username: username, password: password);
 
     result.fold(
       onSuccess: (user) {

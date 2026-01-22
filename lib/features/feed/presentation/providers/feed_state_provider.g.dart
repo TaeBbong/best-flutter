@@ -45,7 +45,7 @@ final class FeedNotifierProvider
   FeedNotifier create() => FeedNotifier();
 }
 
-String _$feedNotifierHash() => r'f5c5507d6f94b0dab259333b1a21bbc6f3aa8e9a';
+String _$feedNotifierHash() => r'7c69fc1c1acee3c484e9e6314372c1b0c3b9bc32';
 
 /// Async notifier for managing feed state and operations.
 ///

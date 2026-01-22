@@ -13,17 +13,15 @@ abstract class User with _$User {
   ///
   /// - [id]: Unique identifier for the user.
   /// - [email]: User's email address.
-  /// - [username]: User's display name.
+  /// - [username]: User's username.
+  /// - [displayName]: User's display name (e.g., "John Doe").
   /// - [profileImageUrl]: Optional URL to the user's profile image.
-  /// - [bio]: Optional user biography or description.
-  /// - [createdAt]: Timestamp when the user account was created.
   const factory User({
     required String id,
     required String email,
     required String username,
+    String? displayName,
     String? profileImageUrl,
-    String? bio,
-    required DateTime createdAt,
   }) = _User;
 
   /// Creates a [User] from a JSON map.

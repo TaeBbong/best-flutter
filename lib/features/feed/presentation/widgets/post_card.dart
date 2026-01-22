@@ -4,8 +4,8 @@ import '../../domain/entities/post.dart';
 
 /// Card widget displaying a single post.
 ///
-/// Shows author info, content, optional images, and action buttons
-/// for liking, commenting, and sharing.
+/// Shows post title, body content, tags, and action buttons
+/// for liking and viewing details.
 class PostCard extends StatelessWidget {
   /// Creates a [PostCard] with the given post data and callbacks.
   const PostCard({
@@ -35,129 +35,101 @@ class PostCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Author info
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundImage: post.authorProfileImageUrl != null
-                        ? NetworkImage(post.authorProfileImageUrl!)
-                        : null,
-                    child: post.authorProfileImageUrl == null
-                        ? Text(
-                            post.authorUsername[0].toUpperCase(),
-                            style: Theme.of(context).textTheme.titleMedium,
-                          )
-                        : null,
-                  ),
-                  const SizedBox(width: AppTheme.spacingSm),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          post.authorUsername,
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                        Text(
-                          _formatTimeAgo(post.createdAt),
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.more_horiz),
-                    onPressed: () {
-                      // Show post options
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppTheme.spacingSm),
-
-              // Content
+              // Title
               Text(
-                post.content,
-                style: Theme.of(context).textTheme.bodyMedium,
+                post.title,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-
-              // Images
-              if (post.imageUrls != null && post.imageUrls!.isNotEmpty) ...[
-                const SizedBox(height: AppTheme.spacingSm),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  child: post.imageUrls!.length == 1
-                      ? Image.network(
-                          post.imageUrls!.first,
-                          width: double.infinity,
-                          height: 200,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stack) => Container(
-                            height: 200,
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                            child: const Center(
-                              child: Icon(Icons.broken_image_outlined),
-                            ),
-                          ),
-                        )
-                      : SizedBox(
-                          height: 200,
-                          child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: post.imageUrls!.length,
-                            separatorBuilder: (_, __) => const SizedBox(width: AppTheme.spacingXs),
-                            itemBuilder: (context, index) => ClipRRect(
-                              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                              child: Image.network(
-                                post.imageUrls![index],
-                                width: 200,
-                                height: 200,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stack) => Container(
-                                  width: 200,
-                                  height: 200,
-                                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                                  child: const Center(
-                                    child: Icon(Icons.broken_image_outlined),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                ),
-              ],
               const SizedBox(height: AppTheme.spacingSm),
 
-              // Actions
+              // Body content
+              Text(
+                post.body,
+                style: Theme.of(context).textTheme.bodyMedium,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: AppTheme.spacingSm),
+
+              // Tags
+              if (post.tags.isNotEmpty) ...[
+                Wrap(
+                  spacing: AppTheme.spacingXs,
+                  runSpacing: AppTheme.spacingXs,
+                  children: post.tags.map((tag) {
+                    return Chip(
+                      label: Text(
+                        '#$tag',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      padding: EdgeInsets.zero,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      visualDensity: VisualDensity.compact,
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: AppTheme.spacingSm),
+              ],
+
+              // Stats and Actions
               Row(
                 children: [
+                  // Likes
                   _ActionButton(
-                    icon: post.isLiked ? Icons.favorite : Icons.favorite_border,
-                    label: '${post.likesCount}',
-                    color: post.isLiked ? Colors.red : null,
+                    icon: Icons.favorite_border,
+                    label: '${post.likes}',
                     onPressed: onLike,
                   ),
                   const SizedBox(width: AppTheme.spacingMd),
-                  _ActionButton(
-                    icon: Icons.chat_bubble_outline,
-                    label: '${post.commentsCount}',
-                    onPressed: () {
-                      // Open comments
-                    },
+
+                  // Dislikes (display only)
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.thumb_down_outlined,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                      const SizedBox(width: AppTheme.spacingXs),
+                      Text(
+                        '${post.dislikes}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
+                      ),
+                    ],
                   ),
                   const SizedBox(width: AppTheme.spacingMd),
-                  _ActionButton(
-                    icon: Icons.share_outlined,
-                    label: 'Share',
-                    onPressed: () {
-                      // Share post
-                    },
+
+                  // Views
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.visibility_outlined,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                      const SizedBox(width: AppTheme.spacingXs),
+                      Text(
+                        '${post.views}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+
+                  // User ID
+                  Text(
+                    'User #${post.userId}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
                   ),
                 ],
               ),
@@ -167,30 +139,9 @@ class PostCard extends StatelessWidget {
       ),
     );
   }
-
-  /// Formats a [DateTime] as a human-readable relative time string.
-  ///
-  /// Returns formats like "Just now", "5m ago", "2h ago", "3d ago",
-  /// or the full date for posts older than a week.
-  String _formatTimeAgo(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
-
-    if (difference.inDays > 7) {
-      return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
-    } else if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
-    } else {
-      return 'Just now';
-    }
-  }
 }
 
-/// Action button for post interactions (like, comment, share).
+/// Action button for post interactions (like, etc.).
 ///
 /// Displays an icon and label with optional custom color.
 class _ActionButton extends StatelessWidget {

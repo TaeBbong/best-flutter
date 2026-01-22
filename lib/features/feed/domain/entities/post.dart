@@ -12,26 +12,22 @@ abstract class Post with _$Post {
   /// Creates a [Post] instance.
   ///
   /// - [id]: Unique identifier for the post.
-  /// - [authorId]: ID of the user who created the post.
-  /// - [authorUsername]: Display name of the post author.
-  /// - [authorProfileImageUrl]: Optional URL to the author's profile image.
-  /// - [content]: Text content of the post.
-  /// - [imageUrls]: Optional list of image URLs attached to the post.
-  /// - [likesCount]: Number of likes on the post.
-  /// - [commentsCount]: Number of comments on the post.
-  /// - [isLiked]: Whether the current user has liked this post.
-  /// - [createdAt]: Timestamp when the post was created.
+  /// - [title]: Title of the post.
+  /// - [body]: Body content of the post.
+  /// - [userId]: ID of the user who created the post.
+  /// - [tags]: List of tags associated with the post.
+  /// - [likes]: Number of likes on the post.
+  /// - [dislikes]: Number of dislikes on the post.
+  /// - [views]: Number of views on the post.
   const factory Post({
-    required String id,
-    required String authorId,
-    required String authorUsername,
-    String? authorProfileImageUrl,
-    required String content,
-    List<String>? imageUrls,
-    required int likesCount,
-    required int commentsCount,
-    required bool isLiked,
-    required DateTime createdAt,
+    required int id,
+    required String title,
+    required String body,
+    required int userId,
+    @Default([]) List<String> tags,
+    @Default(0) int likes,
+    @Default(0) int dislikes,
+    @Default(0) int views,
   }) = _Post;
 
   /// Creates a [Post] from a JSON map.

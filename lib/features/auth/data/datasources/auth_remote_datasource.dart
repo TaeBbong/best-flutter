@@ -8,23 +8,14 @@ import '../models/user_model.dart';
 ///
 /// Defines the contract for API calls related to authentication.
 abstract class AuthRemoteDataSource {
-  /// Authenticates a user with email and password.
+  /// Authenticates a user with username and password.
   ///
+  /// DummyJSON uses username instead of email for login.
   /// Returns a [UserModel] on successful authentication.
   /// Throws [AuthException] if authentication fails.
   Future<UserModel> login({
-    required String email,
-    required String password,
-  });
-
-  /// Registers a new user account.
-  ///
-  /// Returns a [UserModel] of the newly created user.
-  /// Throws [AuthException] if registration fails.
-  Future<UserModel> register({
-    required String email,
-    required String password,
     required String username,
+    required String password,
   });
 
   /// Logs out the current user.
@@ -38,16 +29,6 @@ abstract class AuthRemoteDataSource {
   /// Returns a [UserModel] of the current user.
   /// Throws [AuthException] if no user is authenticated.
   Future<UserModel> getCurrentUser();
-
-  /// Updates the current user's profile information.
-  ///
-  /// Returns a [UserModel] with the updated data.
-  /// Throws [AuthException] if update fails.
-  Future<UserModel> updateProfile({
-    String? username,
-    String? bio,
-    String? profileImageUrl,
-  });
 }
 
 /// Implementation of [AuthRemoteDataSource] using the API client.
@@ -60,49 +41,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<UserModel> login({
-    required String email,
+    required String username,
     required String password,
   }) async {
     try {
       final response = await _apiClient.login({
-        'email': email,
-        'password': password,
-      });
-
-      // Store authentication tokens
-      final accessToken = response['accessToken'] as String;
-      final refreshToken = response['refreshToken'] as String;
-
-      await _secureStorage.write(
-        key: AppConstants.accessTokenKey,
-        value: accessToken,
-      );
-      await _secureStorage.write(
-        key: AppConstants.refreshTokenKey,
-        value: refreshToken,
-      );
-
-      final userData = response['user'] as Map<String, dynamic>;
-      return UserModel.fromJson(userData);
-    } catch (e) {
-      throw AuthException(e.toString());
-    }
-  }
-
-  @override
-  Future<UserModel> register({
-    required String email,
-    required String password,
-    required String username,
-  }) async {
-    try {
-      final response = await _apiClient.register({
-        'email': email,
-        'password': password,
         'username': username,
+        'password': password,
       });
 
-      // Store authentication tokens
+      // DummyJSON returns user data and tokens in the same response
       final accessToken = response['accessToken'] as String;
       final refreshToken = response['refreshToken'] as String;
 
@@ -115,8 +63,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         value: refreshToken,
       );
 
-      final userData = response['user'] as Map<String, dynamic>;
-      return UserModel.fromJson(userData);
+      // Store user ID for later use
+      final userId = response['id'] as int;
+      await _secureStorage.write(
+        key: AppConstants.userIdKey,
+        value: userId.toString(),
+      );
+
+      // DummyJSON returns user data directly in the login response
+      return UserModel.fromJson(response);
     } catch (e) {
       throw AuthException(e.toString());
     }
@@ -141,36 +96,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const AuthException('No token found');
       }
 
-      // Extract user ID from JWT token or use stored value
-      final userId = await _secureStorage.read(key: AppConstants.userIdKey);
-      if (userId == null) {
-        throw const AuthException('No user ID found');
-      }
-
-      // TODO: Implement API call: GET /users/me
-      throw const AuthException('getCurrentUser not implemented');
-    } catch (e) {
-      throw AuthException(e.toString());
-    }
-  }
-
-  @override
-  Future<UserModel> updateProfile({
-    String? username,
-    String? bio,
-    String? profileImageUrl,
-  }) async {
-    try {
-      final Map<String, dynamic> data = {};
-      if (username != null) data['username'] = username;
-      if (bio != null) data['bio'] = bio;
-      if (profileImageUrl != null) data['profileImageUrl'] = profileImageUrl;
-
-      // TODO: Implement API call
-      // final response = await _apiClient.updateProfile(data);
-      // return UserModel.fromJson(response);
-
-      throw const AuthException('updateProfile not implemented');
+      // DummyJSON provides /auth/me endpoint to get current user
+      final response = await _apiClient.getCurrentUser();
+      return UserModel.fromJson(response);
     } catch (e) {
       throw AuthException(e.toString());
     }

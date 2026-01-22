@@ -19,13 +19,16 @@ abstract class FeedRepository {
 
   /// Creates a new post.
   ///
-  /// - [content]: Text content of the post.
-  /// - [imageUrls]: Optional list of image URLs to attach.
+  /// DummyJSON requires title, body, and userId for post creation.
+  /// - [title]: Title of the post.
+  /// - [body]: Body content of the post.
+  /// - [userId]: ID of the user creating the post.
   ///
   /// Returns a [Result] containing the created [Post] on success.
   Future<Result<Post>> createPost({
-    required String content,
-    List<String>? imageUrls,
+    required String title,
+    required String body,
+    required int userId,
   });
 
   /// Retrieves a single post by its ID.
@@ -33,19 +36,19 @@ abstract class FeedRepository {
   /// - [id]: Unique identifier of the post.
   ///
   /// Returns a [Result] containing the [Post] on success.
-  Future<Result<Post>> getPost(String id);
+  Future<Result<Post>> getPost(int id);
 
-  /// Adds a like to a post.
+  /// Updates the like count for a post.
   ///
-  /// - [id]: Unique identifier of the post to like.
+  /// DummyJSON doesn't have dedicated like/unlike endpoints,
+  /// so this updates the reactions count directly.
   ///
-  /// Returns a [Result] indicating success or failure.
-  Future<Result<void>> likePost(String id);
-
-  /// Removes a like from a post.
+  /// - [id]: Unique identifier of the post.
+  /// - [likes]: New like count.
   ///
-  /// - [id]: Unique identifier of the post to unlike.
-  ///
-  /// Returns a [Result] indicating success or failure.
-  Future<Result<void>> unlikePost(String id);
+  /// Returns a [Result] containing the updated [Post] on success.
+  Future<Result<Post>> updateLikes({
+    required int id,
+    required int likes,
+  });
 }

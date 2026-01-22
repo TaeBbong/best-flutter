@@ -7,30 +7,35 @@ part of 'post_model.dart';
 // **************************************************************************
 
 _PostModel _$PostModelFromJson(Map<String, dynamic> json) => _PostModel(
-  id: json['id'] as String,
-  authorId: json['authorId'] as String,
-  authorUsername: json['authorUsername'] as String,
-  authorProfileImageUrl: json['authorProfileImageUrl'] as String?,
-  content: json['content'] as String,
-  imageUrls: (json['imageUrls'] as List<dynamic>?)
-      ?.map((e) => e as String)
-      .toList(),
-  likesCount: (json['likesCount'] as num).toInt(),
-  commentsCount: (json['commentsCount'] as num).toInt(),
-  isLiked: json['isLiked'] as bool,
-  createdAt: DateTime.parse(json['createdAt'] as String),
+  id: (json['id'] as num).toInt(),
+  title: json['title'] as String,
+  body: json['body'] as String,
+  userId: (json['userId'] as num).toInt(),
+  tags:
+      (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+      const [],
+  reactions: json['reactions'] == null
+      ? const ReactionsModel()
+      : ReactionsModel.fromJson(json['reactions'] as Map<String, dynamic>),
+  views: (json['views'] as num?)?.toInt() ?? 0,
 );
 
 Map<String, dynamic> _$PostModelToJson(_PostModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'authorId': instance.authorId,
-      'authorUsername': instance.authorUsername,
-      'authorProfileImageUrl': instance.authorProfileImageUrl,
-      'content': instance.content,
-      'imageUrls': instance.imageUrls,
-      'likesCount': instance.likesCount,
-      'commentsCount': instance.commentsCount,
-      'isLiked': instance.isLiked,
-      'createdAt': instance.createdAt.toIso8601String(),
+      'title': instance.title,
+      'body': instance.body,
+      'userId': instance.userId,
+      'tags': instance.tags,
+      'reactions': instance.reactions,
+      'views': instance.views,
     };
+
+_ReactionsModel _$ReactionsModelFromJson(Map<String, dynamic> json) =>
+    _ReactionsModel(
+      likes: (json['likes'] as num?)?.toInt() ?? 0,
+      dislikes: (json['dislikes'] as num?)?.toInt() ?? 0,
+    );
+
+Map<String, dynamic> _$ReactionsModelToJson(_ReactionsModel instance) =>
+    <String, dynamic>{'likes': instance.likes, 'dislikes': instance.dislikes};

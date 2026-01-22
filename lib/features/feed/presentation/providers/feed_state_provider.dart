@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/error/result.dart';
 import '../../di/feed_providers.dart';
 import '../../domain/entities/post.dart';
+import '../../../auth/presentation/providers/auth_state_provider.dart';
 
 part 'feed_state_provider.g.dart';
 
@@ -133,14 +134,27 @@ class FeedNotifier extends _$FeedNotifier {
 
   /// Creates a new post with the given content.
   ///
-  /// - [content]: Text content of the post.
-  /// - [imageUrls]: Optional list of image URLs.
+  /// DummyJSON requires title, body, and userId.
+  /// - [title]: Title of the post.
+  /// - [body]: Body content of the post.
   ///
   /// Returns true on success, false on failure.
   /// On success, prepends the new post to the feed.
-  Future<bool> createPost({required String content, List<String>? imageUrls}) async {
+  Future<bool> createPost({required String title, required String body}) async {
+    // Get current user ID from auth state
+    // authProvider is used to get the current logged-in user's ID
+    // for creating posts with the correct userId
+    final authState = ref.read(authProvider);
+    final userId = authState.user != null
+        ? int.tryParse(authState.user!.id) ?? 1
+        : 1;
+
     final createPostUseCase = ref.read(createPostUseCaseProvider);
-    final result = await createPostUseCase(content: content, imageUrls: imageUrls);
+    final result = await createPostUseCase(
+      title: title,
+      body: body,
+      userId: userId,
+    );
 
     return result.fold(
       onSuccess: (post) {
@@ -162,7 +176,7 @@ class FeedNotifier extends _$FeedNotifier {
   ///
   /// Uses optimistic updates for immediate UI feedback.
   /// Reverts on API failure.
-  Future<void> toggleLike(String postId) async {
+  Future<void> toggleLike(int postId) async {
     final currentState = state.value;
     if (currentState == null) return;
 
@@ -170,13 +184,11 @@ class FeedNotifier extends _$FeedNotifier {
     if (postIndex == -1) return;
 
     final post = currentState.posts[postIndex];
-    final isCurrentlyLiked = post.isLiked;
+    final currentLikes = post.likes;
+    final newLikes = currentLikes + 1;
 
     // Optimistic update
-    final updatedPost = post.copyWith(
-      isLiked: !isCurrentlyLiked,
-      likesCount: isCurrentlyLiked ? post.likesCount - 1 : post.likesCount + 1,
-    );
+    final updatedPost = post.copyWith(likes: newLikes);
 
     final updatedPosts = [...currentState.posts];
     updatedPosts[postIndex] = updatedPost;
@@ -184,7 +196,11 @@ class FeedNotifier extends _$FeedNotifier {
 
     // API call
     final likePostUseCase = ref.read(likePostUseCaseProvider);
-    final result = await likePostUseCase(postId: postId, like: !isCurrentlyLiked);
+    final result = await likePostUseCase(
+      postId: postId,
+      currentLikes: currentLikes,
+      like: true,
+    );
 
     result.fold(
       onSuccess: (_) {

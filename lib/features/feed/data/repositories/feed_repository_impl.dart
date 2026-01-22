@@ -36,13 +36,15 @@ class FeedRepositoryImpl implements FeedRepository {
 
   @override
   Future<Result<Post>> createPost({
-    required String content,
-    List<String>? imageUrls,
+    required String title,
+    required String body,
+    required int userId,
   }) async {
     try {
       final postModel = await _remoteDataSource.createPost(
-        content: content,
-        imageUrls: imageUrls,
+        title: title,
+        body: body,
+        userId: userId,
       );
       return Success(postModel.toEntity());
     } on AppException catch (e) {
@@ -53,7 +55,7 @@ class FeedRepositoryImpl implements FeedRepository {
   }
 
   @override
-  Future<Result<Post>> getPost(String id) async {
+  Future<Result<Post>> getPost(int id) async {
     try {
       final postModel = await _remoteDataSource.getPost(id);
       return Success(postModel.toEntity());
@@ -65,22 +67,13 @@ class FeedRepositoryImpl implements FeedRepository {
   }
 
   @override
-  Future<Result<void>> likePost(String id) async {
+  Future<Result<Post>> updateLikes({
+    required int id,
+    required int likes,
+  }) async {
     try {
-      await _remoteDataSource.likePost(id);
-      return const Success(null);
-    } on AppException catch (e) {
-      return Error(mapExceptionToFailure(e));
-    } catch (e) {
-      return const Error(UnknownFailure('An unknown error occurred'));
-    }
-  }
-
-  @override
-  Future<Result<void>> unlikePost(String id) async {
-    try {
-      await _remoteDataSource.unlikePost(id);
-      return const Success(null);
+      final postModel = await _remoteDataSource.updatePostReactions(id, likes);
+      return Success(postModel.toEntity());
     } on AppException catch (e) {
       return Error(mapExceptionToFailure(e));
     } catch (e) {

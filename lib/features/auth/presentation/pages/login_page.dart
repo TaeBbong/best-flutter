@@ -5,8 +5,12 @@ import '../providers/auth_state_provider.dart';
 
 /// Login page for user authentication.
 ///
-/// Provides a form for email and password input with validation.
+/// Provides a form for username and password input with validation.
 /// Shows loading state during authentication and error messages on failure.
+///
+/// Test credentials for DummyJSON:
+/// - username: emilys
+/// - password: emilyspass
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
@@ -16,13 +20,13 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -31,7 +35,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
       ref.read(authProvider.notifier).login(
-            email: _emailController.text.trim(),
+            username: _usernameController.text.trim(),
             password: _passwordController.text,
           );
     }
@@ -79,21 +83,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   const SizedBox(height: AppTheme.spacingXl),
 
-                  // Email Field
+                  // Username Field
                   TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
+                    controller: _usernameController,
+                    keyboardType: TextInputType.text,
                     decoration: const InputDecoration(
-                      labelText: 'Email',
-                      hintText: 'Enter your email',
-                      prefixIcon: Icon(Icons.email_outlined),
+                      labelText: 'Username',
+                      hintText: 'Enter your username (e.g., emilys)',
+                      prefixIcon: Icon(Icons.person_outlined),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Please enter a valid email';
+                        return 'Please enter your username';
                       }
                       return null;
                     },
@@ -125,22 +126,22 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your password';
                       }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
                       return null;
                     },
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
 
-                  // Forgot Password
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        // TODO: Navigate to forgot password
-                      },
-                      child: const Text('Forgot Password?'),
+                  // Test credentials hint
+                  Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'Test: username "emilys", password "emilyspass"',
+                      style: Theme.of(context).textTheme.bodySmall,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   const SizedBox(height: AppTheme.spacingLg),

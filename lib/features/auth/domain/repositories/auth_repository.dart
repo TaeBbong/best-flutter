@@ -7,18 +7,23 @@ import '../entities/user.dart';
 /// data operations. Implementations handle the actual data source
 /// interactions (API, local storage, etc.).
 abstract class AuthRepository {
-  /// Authenticates a user with email and password.
+  /// Authenticates a user with username and password.
   ///
+  /// DummyJSON uses username instead of email for login.
   /// Returns a [Result] containing the authenticated [User] on success,
   /// or a failure if authentication fails.
   Future<Result<User>> login({
-    required String email,
+    required String username,
     required String password,
   });
 
   /// Registers a new user account.
   ///
-  /// Returns a [Result] containing the newly created [User] on success,
+  /// Note: DummyJSON doesn't support actual registration.
+  /// This is kept for frontend practice - internally it performs
+  /// a login with a default test user.
+  ///
+  /// Returns a [Result] containing the "registered" [User] on success,
   /// or a failure if registration fails.
   Future<Result<User>> register({
     required String email,
@@ -37,16 +42,6 @@ abstract class AuthRepository {
   /// Returns a [Result] containing the current [User] if authenticated,
   /// or a failure if no user is logged in.
   Future<Result<User>> getCurrentUser();
-
-  /// Updates the current user's profile information.
-  ///
-  /// Only provided fields will be updated; null values are ignored.
-  /// Returns a [Result] containing the updated [User] on success.
-  Future<Result<User>> updateProfile({
-    String? username,
-    String? bio,
-    String? profileImageUrl,
-  });
 
   /// Stream of the current user's authentication state.
   ///

@@ -12,6 +12,7 @@
 - **라우팅**: go_router 17.x
 - **네트워크**: Dio (직접 사용, retrofit 미사용)
 - **데이터 모델**: Freezed 3.x
+- **API**: DummyJSON (https://dummyjson.com) - 테스트용 공개 API
 
 ## 핵심 기술 스택 버전 및 주의사항
 
@@ -191,7 +192,38 @@ fvm flutter analyze
 fvm flutter run
 ```
 
+## DummyJSON API 정보
+
+테스트용 공개 API로 DummyJSON을 사용합니다.
+
+### 테스트 계정
+- **Username**: `emilys`
+- **Password**: `emilyspass`
+- 더 많은 테스트 사용자: https://dummyjson.com/users
+
+### 주요 엔드포인트
+- **로그인**: `POST /auth/login` (username, password 사용)
+- **현재 사용자**: `GET /auth/me`
+- **게시물 목록**: `GET /posts?skip=0&limit=20`
+- **게시물 생성**: `POST /posts/add`
+- **게시물 수정**: `PATCH /posts/{id}`
+
+### 주의사항
+- DummyJSON은 실제 데이터를 저장하지 않음 (시뮬레이션)
+- 회원가입은 지원하지 않음 → 기존 테스트 사용자로 로그인하도록 처리
+- Post에는 `title`, `body`, `userId`, `tags`, `reactions` 필드 사용
+- User에는 `username`, `firstName`, `lastName`, `image` 필드 사용 (email 대신 username으로 로그인)
+
 ## 최근 수정 이력
+
+### 2026-01-22
+1. **api**: DummyJSON API로 변경 (`https://dummyjson.com`)
+2. **auth**: email 기반 → username 기반 로그인으로 변경
+3. **models**: DummyJSON 응답 형식에 맞게 User/Post 모델 수정
+   - User: id(int), username, email, firstName, lastName, image
+   - Post: id(int), title, body, userId, tags, reactions(likes, dislikes), views
+4. **register**: DummyJSON이 회원가입을 지원하지 않아 기본 테스트 사용자로 로그인하도록 처리
+5. **feed**: content/imageUrls → title/body 구조로 변경
 
 ### 2026-01-12
 1. **di**: Clean Architecture 준수를 위한 DI 구조 리팩토링

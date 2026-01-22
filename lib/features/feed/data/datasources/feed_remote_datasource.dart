@@ -20,14 +20,16 @@ abstract class FeedRemoteDataSource {
 
   /// Creates a new post.
   ///
-  /// - [content]: Text content of the post.
-  /// - [imageUrls]: Optional list of image URLs to attach.
+  /// - [title]: Title of the post.
+  /// - [body]: Body content of the post.
+  /// - [userId]: ID of the user creating the post.
   ///
   /// Returns the created [PostModel].
   /// Throws [ServerException] if the request fails.
   Future<PostModel> createPost({
-    required String content,
-    List<String>? imageUrls,
+    required String title,
+    required String body,
+    required int userId,
   });
 
   /// Retrieves a single post by its ID.
@@ -36,21 +38,16 @@ abstract class FeedRemoteDataSource {
   ///
   /// Returns the [PostModel].
   /// Throws [ServerException] if the request fails.
-  Future<PostModel> getPost(String id);
+  Future<PostModel> getPost(int id);
 
-  /// Adds a like to a post.
+  /// Updates a post's reactions (simulates like functionality).
   ///
-  /// - [id]: Unique identifier of the post to like.
+  /// - [id]: Unique identifier of the post.
+  /// - [likes]: New likes count.
   ///
+  /// Returns the updated [PostModel].
   /// Throws [ServerException] if the request fails.
-  Future<void> likePost(String id);
-
-  /// Removes a like from a post.
-  ///
-  /// - [id]: Unique identifier of the post to unlike.
-  ///
-  /// Throws [ServerException] if the request fails.
-  Future<void> unlikePost(String id);
+  Future<PostModel> updatePostReactions(int id, int likes);
 }
 
 /// Implementation of [FeedRemoteDataSource] using the API client.
@@ -66,8 +63,16 @@ class FeedRemoteDataSourceImpl implements FeedRemoteDataSource {
     required int limit,
   }) async {
     try {
-      final response = await _apiClient.getPosts(page, limit);
-      return response.map((json) => PostModel.fromJson(json)).toList();
+      // DummyJSON uses skip instead of page
+      // Convert page (1-indexed) to skip value
+      final skip = (page - 1) * limit;
+      final response = await _apiClient.getPosts(skip: skip, limit: limit);
+
+      // DummyJSON returns { posts: [...], total: int, skip: int, limit: int }
+      final posts = response['posts'] as List;
+      return posts
+          .map((json) => PostModel.fromJson(json as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       throw ServerException(e.toString(), null);
     }
@@ -75,13 +80,15 @@ class FeedRemoteDataSourceImpl implements FeedRemoteDataSource {
 
   @override
   Future<PostModel> createPost({
-    required String content,
-    List<String>? imageUrls,
+    required String title,
+    required String body,
+    required int userId,
   }) async {
     try {
       final response = await _apiClient.createPost({
-        'content': content,
-        if (imageUrls != null) 'imageUrls': imageUrls,
+        'title': title,
+        'body': body,
+        'userId': userId,
       });
       return PostModel.fromJson(response);
     } catch (e) {
@@ -90,7 +97,7 @@ class FeedRemoteDataSourceImpl implements FeedRemoteDataSource {
   }
 
   @override
-  Future<PostModel> getPost(String id) async {
+  Future<PostModel> getPost(int id) async {
     try {
       final response = await _apiClient.getPost(id);
       return PostModel.fromJson(response);
@@ -100,18 +107,14 @@ class FeedRemoteDataSourceImpl implements FeedRemoteDataSource {
   }
 
   @override
-  Future<void> likePost(String id) async {
+  Future<PostModel> updatePostReactions(int id, int likes) async {
     try {
-      await _apiClient.likePost(id);
-    } catch (e) {
-      throw ServerException(e.toString(), null);
-    }
-  }
-
-  @override
-  Future<void> unlikePost(String id) async {
-    try {
-      await _apiClient.unlikePost(id);
+      // DummyJSON doesn't have a dedicated like endpoint
+      // We simulate by updating the post with new reaction count
+      final response = await _apiClient.updatePost(id, {
+        'reactions': {'likes': likes, 'dislikes': 0},
+      });
+      return PostModel.fromJson(response);
     } catch (e) {
       throw ServerException(e.toString(), null);
     }

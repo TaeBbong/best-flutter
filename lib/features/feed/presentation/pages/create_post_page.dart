@@ -6,7 +6,7 @@ import '../providers/feed_state_provider.dart';
 
 /// Page for creating a new post.
 ///
-/// Provides a text input for post content and media attachment options.
+/// Provides text inputs for post title and body content.
 /// Validates input before submission and shows appropriate feedback.
 class CreatePostPage extends ConsumerStatefulWidget {
   /// Creates a [CreatePostPage] widget.
@@ -18,14 +18,16 @@ class CreatePostPage extends ConsumerStatefulWidget {
 
 /// State for [CreatePostPage].
 ///
-/// Manages the content text controller and submission state.
+/// Manages the content text controllers and submission state.
 class _CreatePostPageState extends ConsumerState<CreatePostPage> {
-  final _contentController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _bodyController = TextEditingController();
   bool _isSubmitting = false;
 
   @override
   void dispose() {
-    _contentController.dispose();
+    _titleController.dispose();
+    _bodyController.dispose();
     super.dispose();
   }
 
@@ -34,10 +36,19 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
   /// Validates content is not empty, calls the create post API,
   /// and navigates back on success with a success snackbar.
   Future<void> _handleSubmit() async {
-    final content = _contentController.text.trim();
-    if (content.isEmpty) {
+    final title = _titleController.text.trim();
+    final body = _bodyController.text.trim();
+
+    if (title.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please write something')),
+        const SnackBar(content: Text('Please enter a title')),
+      );
+      return;
+    }
+
+    if (body.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please write some content')),
       );
       return;
     }
@@ -45,7 +56,8 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     setState(() => _isSubmitting = true);
 
     final success = await ref.read(feedProvider.notifier).createPost(
-          content: content,
+          title: title,
+          body: body,
         );
 
     setState(() => _isSubmitting = false);
@@ -88,97 +100,47 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Content input
+            // Title input
             TextField(
-              controller: _contentController,
+              controller: _titleController,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: const InputDecoration(
+                labelText: 'Title',
+                hintText: 'Enter post title',
+                border: OutlineInputBorder(),
+              ),
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: AppTheme.spacingMd),
+
+            // Body input
+            TextField(
+              controller: _bodyController,
               maxLines: null,
               minLines: 5,
               textCapitalization: TextCapitalization.sentences,
               decoration: const InputDecoration(
+                labelText: 'Content',
                 hintText: "What's on your mind?",
-                border: InputBorder.none,
+                border: OutlineInputBorder(),
+                alignLabelWithHint: true,
               ),
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: AppTheme.spacingMd),
 
-            // Media options
-            const Divider(),
-            const SizedBox(height: AppTheme.spacingSm),
-            Row(
-              children: [
-                _MediaButton(
-                  icon: Icons.image_outlined,
-                  label: 'Photo',
-                  onTap: () {
-                    // Pick image from gallery
-                  },
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                _MediaButton(
-                  icon: Icons.camera_alt_outlined,
-                  label: 'Camera',
-                  onTap: () {
-                    // Take photo
-                  },
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                _MediaButton(
-                  icon: Icons.gif_box_outlined,
-                  label: 'GIF',
-                  onTap: () {
-                    // Pick GIF
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Button widget for media attachment options.
-///
-/// Displays an icon and label in a tappable row format.
-class _MediaButton extends StatelessWidget {
-  /// Creates a [_MediaButton] with the given icon, label, and callback.
-  const _MediaButton({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  /// The icon to display.
-  final IconData icon;
-
-  /// The label text to display next to the icon.
-  final String label;
-
-  /// Callback when the button is tapped.
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingSm),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 24,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(width: AppTheme.spacingXs),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+            // Info text
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingSm),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Note: DummyJSON simulates post creation. The post will appear in your feed but won\'t persist on the server.',
+                style: Theme.of(context).textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
             ),
           ],
         ),

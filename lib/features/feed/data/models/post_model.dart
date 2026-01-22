@@ -4,37 +4,32 @@ import '../../domain/entities/post.dart';
 part 'post_model.freezed.dart';
 part 'post_model.g.dart';
 
-/// Data model for post information from the API.
+/// Data model for post information from DummyJSON API.
 ///
 /// This model is used to parse API responses and convert between
 /// the data layer and domain layer representations of a post.
+///
+/// DummyJSON post response format:
+/// - id: int
+/// - title: string
+/// - body: string
+/// - userId: int
+/// - tags: string[]
+/// - reactions: { likes: int, dislikes: int }
+/// - views: int
 @freezed
 abstract class PostModel with _$PostModel {
   const PostModel._();
 
   /// Creates a [PostModel] instance.
-  ///
-  /// - [id]: Unique identifier for the post.
-  /// - [authorId]: ID of the user who created the post.
-  /// - [authorUsername]: Display name of the post author.
-  /// - [authorProfileImageUrl]: Optional URL to the author's profile image.
-  /// - [content]: Text content of the post.
-  /// - [imageUrls]: Optional list of image URLs attached to the post.
-  /// - [likesCount]: Number of likes on the post.
-  /// - [commentsCount]: Number of comments on the post.
-  /// - [isLiked]: Whether the current user has liked this post.
-  /// - [createdAt]: Timestamp when the post was created.
   const factory PostModel({
-    required String id,
-    required String authorId,
-    required String authorUsername,
-    String? authorProfileImageUrl,
-    required String content,
-    List<String>? imageUrls,
-    required int likesCount,
-    required int commentsCount,
-    required bool isLiked,
-    required DateTime createdAt,
+    required int id,
+    required String title,
+    required String body,
+    required int userId,
+    @Default([]) List<String> tags,
+    @Default(ReactionsModel()) ReactionsModel reactions,
+    @Default(0) int views,
   }) = _PostModel;
 
   /// Creates a [PostModel] from a JSON map.
@@ -45,15 +40,13 @@ abstract class PostModel with _$PostModel {
   Post toEntity() {
     return Post(
       id: id,
-      authorId: authorId,
-      authorUsername: authorUsername,
-      authorProfileImageUrl: authorProfileImageUrl,
-      content: content,
-      imageUrls: imageUrls,
-      likesCount: likesCount,
-      commentsCount: commentsCount,
-      isLiked: isLiked,
-      createdAt: createdAt,
+      title: title,
+      body: body,
+      userId: userId,
+      tags: tags,
+      likes: reactions.likes,
+      dislikes: reactions.dislikes,
+      views: views,
     );
   }
 
@@ -61,15 +54,24 @@ abstract class PostModel with _$PostModel {
   factory PostModel.fromEntity(Post post) {
     return PostModel(
       id: post.id,
-      authorId: post.authorId,
-      authorUsername: post.authorUsername,
-      authorProfileImageUrl: post.authorProfileImageUrl,
-      content: post.content,
-      imageUrls: post.imageUrls,
-      likesCount: post.likesCount,
-      commentsCount: post.commentsCount,
-      isLiked: post.isLiked,
-      createdAt: post.createdAt,
+      title: post.title,
+      body: post.body,
+      userId: post.userId,
+      tags: post.tags,
+      reactions: ReactionsModel(likes: post.likes, dislikes: post.dislikes),
+      views: post.views,
     );
   }
+}
+
+/// Model for the reactions object in DummyJSON posts.
+@freezed
+abstract class ReactionsModel with _$ReactionsModel {
+  const factory ReactionsModel({
+    @Default(0) int likes,
+    @Default(0) int dislikes,
+  }) = _ReactionsModel;
+
+  factory ReactionsModel.fromJson(Map<String, dynamic> json) =>
+      _$ReactionsModelFromJson(json);
 }
