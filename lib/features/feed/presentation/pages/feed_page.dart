@@ -26,6 +26,10 @@ class FeedPage extends ConsumerWidget {
             icon: const Icon(Icons.add),
             onPressed: () => context.push(AppRoutes.createPost),
           ),
+          IconButton(
+            icon: const Icon(Icons.person_outline),
+            onPressed: () => context.push(AppRoutes.myPage),
+          ),
         ],
       ),
       body: feedAsync.when(

@@ -115,6 +115,8 @@ lib/
 │   │   │   └── usecases/
 │   │   └── presentation/          # 프레젠테이션 계층
 │   │       ├── pages/
+│   │       │   ├── login_page.dart
+│   │       │   └── my_page.dart   # 마이페이지 (프로필, 로그아웃)
 │   │       ├── providers/         # 상태 관리 Notifier만
 │   │       └── widgets/
 │   │
@@ -270,8 +272,13 @@ result.fold(
 Dio를 직접 사용하지 않고 래핑한 이유:
 
 1. **인터셉터 중앙 관리**: 토큰 추가, 로깅, 에러 변환을 한 곳에서
-2. **토큰 자동 갱신**: 401 응답 시 토큰 갱신 후 재시도
+2. **토큰 자동 갱신**: 401 응답 시 `/auth/refresh`로 토큰 갱신 후 재시도
 3. **테스트 용이성**: Mock Dio 주입 가능
+
+**JWT 토큰 관리**:
+- 로그인 시 `accessToken`, `refreshToken`을 SecureStorage에 저장
+- 모든 요청에 `Authorization: Bearer {token}` 헤더 자동 추가
+- 401 응답 시 refreshToken으로 새 accessToken 발급 후 원래 요청 재시도
 
 ```dart
 // core/network/dio_client.dart
@@ -326,9 +333,16 @@ GoRouter goRouter(GoRouterRef ref) {
     refreshListenable: notifier,  // 인증 상태 변경 시 라우트 재평가
     redirect: (context, state) {
       final isLoggedIn = notifier.isAuthenticated;
+      final isLoading = notifier.isLoading;
       final isLoggingIn = state.matchedLocation == '/login';
 
-      // 로그인한 상태에서 로그인 페이지 접근 시 홈으로
+      // 인증 상태 확인 중에는 리다이렉트하지 않음
+      if (isLoading) return null;
+
+      // 미로그인 상태에서 보호된 페이지 접근 시 로그인으로
+      if (!isLoggedIn && !isLoggingIn) return '/login';
+
+      // 로그인 상태에서 로그인 페이지 접근 시 홈으로
       if (isLoggedIn && isLoggingIn) return '/';
 
       return null;
@@ -1019,7 +1033,7 @@ state = state.copyWith(clearError: true);  // 이제 null로 설정됨
 
 1. **RegisterPage** - 회원가입 UI
 2. **PostDetailPage** - 포스트 상세 + 댓글
-3. **ProfilePage** - 사용자 프로필 편집
+3. ~~**ProfilePage** - 사용자 프로필 편집~~ ✅ MyPage로 구현됨
 4. **이미지 업로드** - image_picker + 서버 업로드
 5. **푸시 알림** - Firebase Cloud Messaging
 6. **오프라인 지원** - Hive/Isar 로컬 캐싱

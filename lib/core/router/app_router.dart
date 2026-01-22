@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/auth/presentation/pages/my_page.dart';
 import '../../features/auth/presentation/providers/auth_state_provider.dart';
 import '../../features/feed/presentation/pages/create_post_page.dart';
 import '../../features/feed/presentation/pages/feed_page.dart';
@@ -30,6 +31,9 @@ abstract class AppRoutes {
 
   /// Post detail page route with dynamic ID parameter.
   static const postDetail = '/post/:id';
+
+  /// My page (profile/settings) route.
+  static const myPage = '/my-page';
 }
 
 /// A ChangeNotifier that listens to authentication state changes.
@@ -39,13 +43,16 @@ abstract class AppRoutes {
 class RouterNotifier extends ChangeNotifier {
   final Ref _ref;
   bool _isAuth = false;
+  bool _isLoading = true;
 
   /// Creates a [RouterNotifier] that listens to the auth provider.
   RouterNotifier(this._ref) {
     _ref.listen(authProvider, (_, state) {
       final isAuth = state.isAuthenticated;
-      if (_isAuth != isAuth) {
+      final isLoading = state.isLoading;
+      if (_isAuth != isAuth || _isLoading != isLoading) {
         _isAuth = isAuth;
+        _isLoading = isLoading;
         notifyListeners();
       }
     });
@@ -53,6 +60,9 @@ class RouterNotifier extends ChangeNotifier {
 
   /// Returns `true` if the user is currently authenticated.
   bool get isAuthenticated => _isAuth;
+
+  /// Returns `true` if authentication check is in progress.
+  bool get isLoading => _isLoading;
 }
 
 /// Provider for the [RouterNotifier] that tracks authentication state.
@@ -77,15 +87,19 @@ GoRouter goRouter(Ref ref) {
     debugLogDiagnostics: true,
     redirect: (context, state) {
       final isLoggedIn = notifier.isAuthenticated;
+      final isLoading = notifier.isLoading;
       final isLoggingIn = state.matchedLocation == AppRoutes.login;
       final isRegistering = state.matchedLocation == AppRoutes.register;
 
+      // Don't redirect while checking auth status
+      if (isLoading) {
+        return null;
+      }
+
       // Redirect to login if accessing protected pages while not logged in.
-      // Currently disabled to allow viewing feed without authentication (SNS app behavior).
-      // Uncomment below to enable authentication requirement.
-      // if (!isLoggedIn && !isLoggingIn && !isRegistering) {
-      //   return AppRoutes.login;
-      // }
+      if (!isLoggedIn && !isLoggingIn && !isRegistering) {
+        return AppRoutes.login;
+      }
 
       // Redirect to feed if already logged in and trying to access login/register
       if (isLoggedIn && (isLoggingIn || isRegistering)) {
@@ -114,6 +128,13 @@ GoRouter goRouter(Ref ref) {
         path: AppRoutes.login,
         name: 'login',
         builder: (context, state) => const LoginPage(),
+      ),
+
+      // My Page route
+      GoRoute(
+        path: AppRoutes.myPage,
+        name: 'myPage',
+        builder: (context, state) => const MyPage(),
       ),
 
       // Register route (TODO: Implement RegisterPage)

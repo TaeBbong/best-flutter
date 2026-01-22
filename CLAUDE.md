@@ -224,6 +224,11 @@ fvm flutter run
    - Post: id(int), title, body, userId, tags, reactions(likes, dislikes), views
 4. **register**: DummyJSON이 회원가입을 지원하지 않아 기본 테스트 사용자로 로그인하도록 처리
 5. **feed**: content/imageUrls → title/body 구조로 변경
+6. **auth**: 자동 로그인 구현 (JWT 토큰 기반)
+   - 앱 시작 시 저장된 토큰으로 `/auth/me` 호출하여 인증 상태 확인
+   - 토큰 만료 시 `/auth/refresh`로 자동 갱신 (DioClient 인터셉터)
+7. **router**: 인증 보호 라우트 활성화 (미인증 시 로그인 페이지로 리다이렉트)
+8. **my-page**: 마이페이지 추가 (프로필 정보, 로그아웃 기능)
 
 ### 2026-01-12
 1. **di**: Clean Architecture 준수를 위한 DI 구조 리팩토링

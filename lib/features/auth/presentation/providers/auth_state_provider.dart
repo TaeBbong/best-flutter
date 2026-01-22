@@ -54,7 +54,31 @@ class AuthState {
 @Riverpod(keepAlive: true)
 class AuthNotifier extends _$AuthNotifier {
   @override
-  AuthState build() => const AuthState();
+  AuthState build() {
+    // 앱 시작 시 저장된 토큰으로 자동 로그인 시도
+    _checkAuthStatus();
+    return const AuthState(isLoading: true);
+  }
+
+  /// Checks if user is already authenticated on app startup.
+  ///
+  /// Attempts to retrieve the current user using stored tokens.
+  /// If successful, updates state with the user.
+  /// If failed, resets to unauthenticated state.
+  Future<void> _checkAuthStatus() async {
+    final getCurrentUserUseCase = ref.read(getCurrentUserUseCaseProvider);
+    final result = await getCurrentUserUseCase();
+
+    result.fold(
+      onSuccess: (user) {
+        state = state.copyWith(user: user, isLoading: false);
+      },
+      onError: (_) {
+        // 토큰이 없거나 만료됨 - 로그인 필요
+        state = const AuthState();
+      },
+    );
+  }
 
   /// Attempts to log in with the given credentials.
   ///
