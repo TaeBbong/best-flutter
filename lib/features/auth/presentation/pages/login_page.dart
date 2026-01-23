@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../providers/auth_state_provider.dart';
 
@@ -165,9 +167,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     children: [
                       const Text("Don't have an account?"),
                       TextButton(
-                        onPressed: () {
-                          // TODO: Navigate to register page
-                        },
+                        onPressed: () => context.push(AppRoutes.register),
                         child: const Text('Sign Up'),
                       ),
                     ],

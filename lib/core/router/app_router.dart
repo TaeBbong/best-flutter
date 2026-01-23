@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../features/auth/presentation/pages/edit_profile_page.dart';
+import '../../features/auth/presentation/pages/help_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/my_page.dart';
+import '../../features/auth/presentation/pages/register_page.dart';
+import '../../features/auth/presentation/pages/settings_page.dart';
 import '../../features/auth/presentation/providers/auth_state_provider.dart';
 import '../../features/feed/presentation/pages/create_post_page.dart';
 import '../../features/feed/presentation/pages/feed_page.dart';
+import '../../features/feed/presentation/pages/post_detail_page.dart';
 
 part 'app_router.g.dart';
 
@@ -34,6 +39,15 @@ abstract class AppRoutes {
 
   /// My page (profile/settings) route.
   static const myPage = '/my-page';
+
+  /// Edit profile page route.
+  static const editProfile = '/edit-profile';
+
+  /// Settings page route.
+  static const settings = '/settings';
+
+  /// Help and support page route.
+  static const help = '/help';
 }
 
 /// A ChangeNotifier that listens to authentication state changes.
@@ -137,22 +151,43 @@ GoRouter goRouter(Ref ref) {
         builder: (context, state) => const MyPage(),
       ),
 
-      // Register route (TODO: Implement RegisterPage)
-      // GoRoute(
-      //   path: AppRoutes.register,
-      //   name: 'register',
-      //   builder: (context, state) => const RegisterPage(),
-      // ),
+      // Register route
+      GoRoute(
+        path: AppRoutes.register,
+        name: 'register',
+        builder: (context, state) => const RegisterPage(),
+      ),
 
-      // Post Detail route (TODO: Implement PostDetailPage)
-      // GoRoute(
-      //   path: AppRoutes.postDetail,
-      //   name: 'postDetail',
-      //   builder: (context, state) {
-      //     final postId = state.pathParameters['id']!;
-      //     return PostDetailPage(postId: postId);
-      //   },
-      // ),
+      // Post Detail route
+      GoRoute(
+        path: AppRoutes.postDetail,
+        name: 'postDetail',
+        builder: (context, state) {
+          final postId = state.pathParameters['id']!;
+          return PostDetailPage(postId: postId);
+        },
+      ),
+
+      // Edit Profile route
+      GoRoute(
+        path: AppRoutes.editProfile,
+        name: 'editProfile',
+        builder: (context, state) => const EditProfilePage(),
+      ),
+
+      // Settings route
+      GoRoute(
+        path: AppRoutes.settings,
+        name: 'settings',
+        builder: (context, state) => const SettingsPage(),
+      ),
+
+      // Help route
+      GoRoute(
+        path: AppRoutes.help,
+        name: 'help',
+        builder: (context, state) => const HelpPage(),
+      ),
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(

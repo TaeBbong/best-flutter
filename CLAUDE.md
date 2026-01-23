@@ -115,7 +115,13 @@ lib/
 │   │   │       ├── logout_usecase.dart
 │   │   │       └── get_current_user_usecase.dart
 │   │   └── presentation/
-│   │       ├── pages/login_page.dart
+│   │       ├── pages/
+│   │       │   ├── login_page.dart
+│   │       │   ├── register_page.dart       # 회원가입 (데모)
+│   │       │   ├── my_page.dart             # 마이페이지
+│   │       │   ├── edit_profile_page.dart   # 프로필 편집
+│   │       │   ├── settings_page.dart       # 설정
+│   │       │   └── help_page.dart           # 도움말
 │   │       ├── providers/
 │   │       │   └── auth_state_provider.dart # AuthNotifier (상태 관리만)
 │   │       └── widgets/
@@ -132,12 +138,14 @@ lib/
 │       │   ├── repositories/feed_repository.dart  # 추상체 (의존성 역전)
 │       │   └── usecases/
 │       │       ├── get_posts_usecase.dart
+│       │       ├── get_post_usecase.dart  # 단일 포스트 조회
 │       │       ├── create_post_usecase.dart
 │       │       └── like_post_usecase.dart
 │       └── presentation/
 │           ├── pages/
 │           │   ├── feed_page.dart
-│           │   └── create_post_page.dart
+│           │   ├── create_post_page.dart
+│           │   └── post_detail_page.dart  # 포스트 상세
 │           ├── providers/
 │           │   └── feed_state_provider.dart # FeedNotifier (상태 관리만)
 │           └── widgets/post_card.dart
@@ -161,6 +169,7 @@ lib/
 | `loginUseCase` | `loginUseCaseProvider` | 로그인 UseCase |
 | `feedRepository` | `feedRepositoryProvider` | FeedRepository 구현체 |
 | `getPostsUseCase` | `getPostsUseCaseProvider` | 피드 조회 UseCase |
+| `getPostUseCase` | `getPostUseCaseProvider` | 단일 포스트 조회 UseCase |
 
 ### 상태 관리 (features/*/presentation/providers/)
 | 클래스 | Provider 이름 | 용도 |
@@ -216,6 +225,18 @@ fvm flutter run
 
 ## 최근 수정 이력
 
+### 2026-01-23
+1. **pages**: TODO로 남아있던 페이지 구현
+   - RegisterPage: 회원가입 페이지 (DummyJSON 제한으로 테스트 계정 로그인)
+   - PostDetailPage: 포스트 상세 페이지 (제목, 본문, 태그, 통계)
+   - EditProfilePage: 프로필 편집 페이지 (데모)
+   - SettingsPage: 앱 설정 페이지 (외관, 알림, 계정)
+   - HelpPage: 도움말 & FAQ 페이지
+2. **usecase**: GetPostUseCase 추가 (단일 포스트 조회)
+3. **router**: 새 라우트 추가 (/register, /post/:id, /edit-profile, /settings, /help)
+4. **navigation**: 모든 TODO 네비게이션 연결 완료
+   - Login → Register, Feed → PostDetail, MyPage → EditProfile/Settings/Help
+
 ### 2026-01-22
 1. **api**: DummyJSON API로 변경 (`https://dummyjson.com`)
 2. **auth**: email 기반 → username 기반 로그인으로 변경
@@ -249,7 +270,7 @@ fvm flutter run
 
 ## 코드 스타일
 
-- 한국어 주석 사용
+- 영어 docstring 및 주석 사용
 - Clean Architecture 계층 분리 준수
 - Result 패턴으로 에러 처리 (`Result.success`, `Result.error`)
 - Freezed로 불변 데이터 클래스 생성

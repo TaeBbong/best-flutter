@@ -116,7 +116,11 @@ lib/
 │   │   └── presentation/          # 프레젠테이션 계층
 │   │       ├── pages/
 │   │       │   ├── login_page.dart
-│   │       │   └── my_page.dart   # 마이페이지 (프로필, 로그아웃)
+│   │       │   ├── register_page.dart  # 회원가입 (데모)
+│   │       │   ├── my_page.dart        # 마이페이지 (프로필, 로그아웃)
+│   │       │   ├── edit_profile_page.dart # 프로필 편집
+│   │       │   ├── settings_page.dart  # 앱 설정
+│   │       │   └── help_page.dart      # 도움말 & FAQ
 │   │       ├── providers/         # 상태 관리 Notifier만
 │   │       └── widgets/
 │   │
@@ -124,7 +128,18 @@ lib/
 │       ├── data/
 │       ├── di/                    # Feature 전용 DI
 │       ├── domain/
+│       │   └── usecases/
+│       │       ├── get_posts_usecase.dart
+│       │       ├── get_post_usecase.dart   # 단일 포스트 조회
+│       │       ├── create_post_usecase.dart
+│       │       └── like_post_usecase.dart
 │       └── presentation/
+│           ├── pages/
+│           │   ├── feed_page.dart
+│           │   ├── create_post_page.dart
+│           │   └── post_detail_page.dart   # 포스트 상세
+│           ├── providers/
+│           └── widgets/
 │
 └── main.dart                      # 앱 진입점
 ```
@@ -1031,13 +1046,15 @@ state = state.copyWith(clearError: true);  // 이제 null로 설정됨
 
 ### 이 프로젝트에서 더 구현해볼 것
 
-1. **RegisterPage** - 회원가입 UI
-2. **PostDetailPage** - 포스트 상세 + 댓글
-3. ~~**ProfilePage** - 사용자 프로필 편집~~ ✅ MyPage로 구현됨
-4. **이미지 업로드** - image_picker + 서버 업로드
-5. **푸시 알림** - Firebase Cloud Messaging
-6. **오프라인 지원** - Hive/Isar 로컬 캐싱
-7. **테스트 작성** - Unit, Widget, Integration 테스트
+1. ~~**RegisterPage** - 회원가입 UI~~ ✅ 구현됨 (DummyJSON 제한으로 테스트 계정 로그인)
+2. ~~**PostDetailPage** - 포스트 상세~~ ✅ 구현됨
+3. ~~**ProfilePage** - 사용자 프로필 편집~~ ✅ MyPage + EditProfilePage로 구현됨
+4. ~~**Settings/Help** - 설정 및 도움말~~ ✅ 구현됨
+5. **댓글 기능** - PostDetail에 댓글 목록 및 작성
+6. **이미지 업로드** - image_picker + 서버 업로드
+7. **푸시 알림** - Firebase Cloud Messaging
+8. **오프라인 지원** - Hive/Isar 로컬 캐싱
+9. **테스트 작성** - Unit, Widget, Integration 테스트
 
 ---
 

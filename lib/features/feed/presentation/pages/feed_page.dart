@@ -145,9 +145,7 @@ class _FeedContent extends ConsumerWidget {
             return PostCard(
               post: post,
               onLike: () => ref.read(feedProvider.notifier).toggleLike(post.id),
-              onTap: () {
-                // Navigate to post detail
-              },
+              onTap: () => context.push('/post/${post.id}'),
             );
           },
         ),

@@ -38,38 +38,17 @@ class MyPage extends ConsumerWidget {
                       _MenuItem(
                         icon: Icons.person_outline,
                         title: 'Edit Profile',
-                        onTap: () {
-                          // TODO: Navigate to edit profile page
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Edit profile coming soon'),
-                            ),
-                          );
-                        },
+                        onTap: () => context.push(AppRoutes.editProfile),
                       ),
                       _MenuItem(
                         icon: Icons.settings_outlined,
                         title: 'Settings',
-                        onTap: () {
-                          // TODO: Navigate to settings page
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Settings coming soon'),
-                            ),
-                          );
-                        },
+                        onTap: () => context.push(AppRoutes.settings),
                       ),
                       _MenuItem(
                         icon: Icons.help_outline,
                         title: 'Help & Support',
-                        onTap: () {
-                          // TODO: Navigate to help page
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Help & Support coming soon'),
-                            ),
-                          );
-                        },
+                        onTap: () => context.push(AppRoutes.help),
                       ),
                     ],
                   ),

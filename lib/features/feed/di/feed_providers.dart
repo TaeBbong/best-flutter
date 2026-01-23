@@ -4,6 +4,7 @@ import '../data/datasources/feed_remote_datasource.dart';
 import '../data/repositories/feed_repository_impl.dart';
 import '../domain/repositories/feed_repository.dart';
 import '../domain/usecases/create_post_usecase.dart';
+import '../domain/usecases/get_post_usecase.dart';
 import '../domain/usecases/get_posts_usecase.dart';
 import '../domain/usecases/like_post_usecase.dart';
 
@@ -47,6 +48,15 @@ GetPostsUseCase getPostsUseCase(Ref ref) {
 CreatePostUseCase createPostUseCase(Ref ref) {
   final repository = ref.watch(feedRepositoryProvider);
   return CreatePostUseCase(repository);
+}
+
+/// Provider for the get single post use case.
+///
+/// Creates a [GetPostUseCase] for fetching a single post by ID.
+@riverpod
+GetPostUseCase getPostUseCase(Ref ref) {
+  final repository = ref.watch(feedRepositoryProvider);
+  return GetPostUseCase(repository);
 }
 
 /// Provider for the like post use case.

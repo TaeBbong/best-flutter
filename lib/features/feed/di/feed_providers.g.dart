@@ -230,6 +230,58 @@ final class CreatePostUseCaseProvider
 
 String _$createPostUseCaseHash() => r'd88ae9f0732694db221979f105b864a8e37e3597';
 
+/// Provider for the get single post use case.
+///
+/// Creates a [GetPostUseCase] for fetching a single post by ID.
+
+@ProviderFor(getPostUseCase)
+final getPostUseCaseProvider = GetPostUseCaseProvider._();
+
+/// Provider for the get single post use case.
+///
+/// Creates a [GetPostUseCase] for fetching a single post by ID.
+
+final class GetPostUseCaseProvider
+    extends $FunctionalProvider<GetPostUseCase, GetPostUseCase, GetPostUseCase>
+    with $Provider<GetPostUseCase> {
+  /// Provider for the get single post use case.
+  ///
+  /// Creates a [GetPostUseCase] for fetching a single post by ID.
+  GetPostUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'getPostUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$getPostUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<GetPostUseCase> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  GetPostUseCase create(Ref ref) {
+    return getPostUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GetPostUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GetPostUseCase>(value),
+    );
+  }
+}
+
+String _$getPostUseCaseHash() => r'cbe672506a203b6847883feed3aa0c5f9cf1a96d';
+
 /// Provider for the like post use case.
 ///
 /// Creates a [LikePostUseCase] for toggling post likes.
