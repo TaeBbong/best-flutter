@@ -38,9 +38,9 @@ class PostCard extends StatelessWidget {
               // Title
               Text(
                 post.title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -98,8 +98,8 @@ class PostCard extends StatelessWidget {
                       Text(
                         '${post.dislikes}',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
                       ),
                     ],
                   ),
@@ -117,8 +117,8 @@ class PostCard extends StatelessWidget {
                       Text(
                         '${post.views}',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
                       ),
                     ],
                   ),
@@ -128,8 +128,8 @@ class PostCard extends StatelessWidget {
                   Text(
                     'User #${post.userId}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
                   ),
                 ],
               ),
@@ -150,6 +150,7 @@ class _ActionButton extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onPressed,
+    // ignore: unused_element_parameter
     this.color,
   });
 
@@ -186,8 +187,8 @@ class _ActionButton extends StatelessWidget {
             Text(
               label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: color ?? Theme.of(context).colorScheme.outline,
-                  ),
+                color: color ?? Theme.of(context).colorScheme.outline,
+              ),
             ),
           ],
         ),
