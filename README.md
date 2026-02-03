@@ -32,6 +32,7 @@ Clean Architecture, Riverpod 3.0, go_router 등 현업에서 사용되는 최신
 | **freezed** | 3.2.3 | 불변 클래스 | copyWith, JSON 직렬화, 패턴 매칭 자동 생성 |
 | **flutter_secure_storage** | 10.0.0 | 보안 저장소 | 토큰 등 민감한 데이터 암호화 저장 |
 | **logger** | 2.6.2 | 로깅 | 개발 중 디버깅을 위한 포맷팅된 로그 출력 |
+| **mockito** | 5.4.4 | 테스트 목킹 | Mock 객체 생성, 의존성 격리 테스트 (dev) |
 
 ### 시작하기
 
@@ -47,6 +48,9 @@ dart run build_runner watch --delete-conflicting-outputs
 
 # 앱 실행
 flutter run
+
+# 테스트 실행
+flutter test
 ```
 
 ### 테스트 API: DummyJSON
@@ -1054,7 +1058,7 @@ state = state.copyWith(clearError: true);  // 이제 null로 설정됨
 6. **이미지 업로드** - image_picker + 서버 업로드
 7. **푸시 알림** - Firebase Cloud Messaging
 8. **오프라인 지원** - Hive/Isar 로컬 캐싱
-9. **테스트 작성** - Unit, Widget, Integration 테스트
+9. ~~**테스트 작성** - Unit, Widget, Integration 테스트~~ ✅ 112개 테스트 구현됨 (Unit + Widget)
 
 ---
 

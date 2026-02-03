@@ -90,3 +90,6 @@ coverage/
 *.pem
 **/google-services.json
 **/GoogleService-Info.plist
+
+# Claude
+.claude/

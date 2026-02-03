@@ -199,6 +199,52 @@ fvm flutter analyze
 
 # 실행
 fvm flutter run
+
+# 테스트
+fvm flutter test
+```
+
+## 테스트 구조
+
+- **테스트 프레임워크**: flutter_test + mockito
+- **Mock 생성**: `@GenerateMocks` 어노테이션 + build_runner
+- **테스트 패턴**: Given-When-Then
+- **더미 값**: sealed class `Result<T>`에 대해 `provideDummy` 사용 필수
+
+```
+test/
+├── helpers/
+│   └── test_data.dart                    # 공유 테스트 데이터 팩토리
+├── core/
+│   ├── error/
+│   │   ├── exceptions_test.dart          # 예외 클래스 테스트
+│   │   ├── failures_test.dart            # 실패 클래스 + mapExceptionToFailure
+│   │   └── result_test.dart              # Result 패턴 테스트
+│   └── network/
+│       └── api_client_test.dart          # API 엔드포인트 테스트
+├── features/
+│   ├── auth/
+│   │   ├── data/
+│   │   │   ├── datasources/auth_remote_datasource_test.dart
+│   │   │   ├── models/user_model_test.dart
+│   │   │   └── repositories/auth_repository_impl_test.dart
+│   │   └── domain/usecases/
+│   │       ├── login_usecase_test.dart
+│   │       ├── register_usecase_test.dart
+│   │       ├── logout_usecase_test.dart
+│   │       └── get_current_user_usecase_test.dart
+│   └── feed/
+│       ├── data/
+│       │   ├── datasources/feed_remote_datasource_test.dart
+│       │   ├── models/post_model_test.dart
+│       │   └── repositories/feed_repository_impl_test.dart
+│       ├── domain/usecases/
+│       │   ├── get_posts_usecase_test.dart
+│       │   ├── get_post_usecase_test.dart
+│       │   ├── create_post_usecase_test.dart
+│       │   └── like_post_usecase_test.dart
+│       └── presentation/widgets/
+│           └── post_card_test.dart
 ```
 
 ## DummyJSON API 정보
@@ -224,6 +270,15 @@ fvm flutter run
 - User에는 `username`, `firstName`, `lastName`, `image` 필드 사용 (email 대신 username으로 로그인)
 
 ## 최근 수정 이력
+
+### 2026-02-03
+1. **test**: 전체 테스트 스위트 작성 (112개 테스트)
+   - Core: exceptions, failures, result, api_client 테스트
+   - Auth: user_model, datasource, repository, 4개 usecase 테스트
+   - Feed: post_model, datasource, repository, 4개 usecase 테스트
+   - Widget: PostCard 위젯 테스트
+   - 공유 테스트 데이터 팩토리 (test/helpers/test_data.dart)
+2. **deps**: mockito 5.4.4 추가 (dev dependency)
 
 ### 2026-01-23
 1. **pages**: TODO로 남아있던 페이지 구현
